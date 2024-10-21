@@ -20,12 +20,15 @@ public interface DBdao {
 	public boolean doctorNumCheck(String findNum);					// 회원가입 시 아이디 중복 체크
 	
 	// 예약관련
-	public ArrayList<DoctorDTO> doctorAll();							// 예약 시 의사 목록
-	public DoctorDTO doctorOne(String findNum);							// 예약 시 의사를 선택하면 해당 의사의 정보 리턴
-	public void reservationAdd(ReservationDTO reservdto);				// 예약하기
-	public ReservationDTO reservationCurrent(String findIden);			// 일반회원이 현재 예약한 내역
+	public ArrayList<DoctorDTO> doctorAll();						// 예약 시 의사 목록
+	public PatientDTO patientOne(String findIden);					// 일반회원 한명의 정보 리턴
+	public DoctorDTO doctorOne(String findNum);						// 의사 한명의 정보 리턴
+	public void reservationAdd(ReservationDTO reservdto);			// 예약하기
+	public ReservationDTO reservationCurrent(String findIden);		// 일반회원이 현재 예약한 내역
 	public ReservationDTO reservationCurrentDoctor(String findDate, String findTime, String findDoc);	// 선택한 의사에게 예약한 날짜/시간이 겹치는 내역
-	public void reservationDel(String findIden);						// 현재 예약 취소
+	public void reservationDel(String findIden);					// 현재 예약 취소
+	public void reservationMod(ReservationDTO reservdto, String modMemo);		// 진료여부,증상메모 변경
+	public void reservationCancel(ReservationDTO reservdto, String modReason);	// 취소사유 변경
 	public ArrayList<ReservationDTO> reservationPatientAll(String findIden);	// 로그인한 환자가 예약한 모든 내역
-	public ArrayList<ReservationDTO> reservationDoctorAll(String findDoc);		// 로그인한 의사에게 예약한 모든 내역
+	public ArrayList<ReservationDTO> reservationDoctorAll(String findNum);		// 로그인한 의사에게 예약한 모든 내역
 }
