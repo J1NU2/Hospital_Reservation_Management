@@ -3,7 +3,14 @@ package gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
+import javax.print.CancelablePrintJob;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -11,9 +18,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import dao.DBdao;
+import dto.DoctorDTO;
+import dto.PatientDTO;
+import dto.ReservationDTO;
 
 public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 	private JPanel mainPanel = new JPanel();
@@ -22,6 +33,7 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 	private JLabel doctorNameLabel = new JLabel("이름");
 	private JLabel doctorNumLabel = new JLabel("의사번호");
 	private JLabel reservListLabel = new JLabel("환자 예약 내역");
+	private JLabel selectRowCheckLabel = new JLabel();
 	
 	private JTextField doctorNameText = new JTextField();
 	private JTextField doctorNumText = new JTextField();
@@ -38,16 +50,26 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 	private JScrollPane reservListScrollPane = new JScrollPane(reservList);
 	
 	private JButton logoutBtn = new JButton("로그아웃");
-	private JButton medicalCheckChangeBtn = new JButton("진료여부 변경");
 	private JButton symptomsMemoChangeBtn = new JButton("증상메모 변경");
-	private JButton cancleBtn = new JButton("예약취소");
+	private JButton cancelBtn = new JButton("예약취소");
 	
 	private DoctorLoginFrame doctorLogin = null;
 	private TextInsertFrame textInsert = null;
 	
 	private DBdao dbdao = null;
-	public DoctorMedicalListFrame(DBdao db) {
+	private DoctorDTO doctordto = null;
+	private ReservationDTO reservdto = null;
+	private ArrayList<ReservationDTO> rList = null;
+	
+	private int rowSel = -1;
+	
+	public DoctorMedicalListFrame(DBdao db, DoctorDTO doctordto) {
 		this.dbdao = db;
+		this.doctordto = doctordto;
+		this.rList = dbdao.reservationDoctorAll(doctordto.getNum());
+		for (int i=0; i<rList.size(); i++) {
+			System.out.println(rList.get(i).toString());
+		}
 		
 		// AbsoluteLayout
 		mainPanel.setLayout(null);
@@ -60,11 +82,13 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 		doctorNameText.setBounds(100, 23, 100, 25);
 		doctorNameText.setBackground(Color.WHITE);
 		doctorNameText.setForeground(Color.BLACK);
+		doctorNameText.setText(doctordto.getName());
 		doctorNameText.setEditable(false);
 		mainPanel.add(doctorNameText);
-		doctorNumText.setBounds(348, 23, 100 ,25);
+		doctorNumText.setBounds(325, 23, 100 ,25);
 		doctorNumText.setBackground(Color.WHITE);
 		doctorNumText.setForeground(Color.BLACK);
+		doctorNumText.setText(doctordto.getNum());
 		doctorNumText.setEditable(false);
 		mainPanel.add(doctorNumText);
 		
@@ -77,19 +101,47 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 		reservListPanel.setBackground(Color.LIGHT_GRAY);
 		reservListLabel.setBounds(15, -5, 80, 50);
 		reservListPanel.add(reservListLabel);
+		reservListPanel.add(selectRowCheckLabel);
+		
+		try {
+			for (int i=0; i<rList.size(); i++) {
+				PatientDTO reservPatient = dbdao.patientOne(rList.get(i).getIdentityNum());
+				String[] rowData = new String[8];
+				rowData[0] = reservPatient.getName();
+				rowData[1] = reservPatient.getIdentityNum();
+				rowData[2] = reservPatient.getAge() + "세";
+				rowData[3] = reservPatient.getGender();
+				rowData[4] = rList.get(i).getDate().substring(2);
+				rowData[5] = rList.get(i).getTime();
+				rowData[6] = rList.get(i).getMedicalCheck();
+				rowData[7] = rList.get(i).getSymptomsMemo();
+				model.addRow(rowData);
+			}
+		} catch (Exception e) {}
 		
 		reservList.setRowHeight(30);
+		reservList.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				selectRowCheckLabel.setText("");
+				rowSel = reservList.getSelectedRow();
+				System.out.println(rowSel + "번 행 선택");
+				System.out.println(rList.get(rowSel).toString());
+			}
+		});
+		reservList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		reservListScrollPane.setBounds(25, 40, 500, 520);
 		reservListPanel.add(reservListScrollPane);
 		
-		medicalCheckChangeBtn.setBounds(200, 585, 110, 30);
-		reservListPanel.add(medicalCheckChangeBtn);
 		symptomsMemoChangeBtn.setBounds(320, 585, 110, 30);
 		reservListPanel.add(symptomsMemoChangeBtn);
-		cancleBtn.setBounds(440, 585, 85, 30);
-		reservListPanel.add(cancleBtn);
+		cancelBtn.setBounds(440, 585, 85, 30);
+		reservListPanel.add(cancelBtn);
 		
 		mainPanel.add(reservListPanel);
+		
+		logoutBtn.addActionListener(this);
+		symptomsMemoChangeBtn.addActionListener(this);
+		cancelBtn.addActionListener(this);
 		
 		this.add(mainPanel);
 		
@@ -112,24 +164,40 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 			}
 			this.setVisible(false);
 			doctorLogin.setVisible(true);
-		} else if (e.getSource() == medicalCheckChangeBtn) {
-			System.out.println("진료여부 변경");
-			// 코드 작성
-			
 		} else if (e.getSource() == symptomsMemoChangeBtn) {
-			System.out.println("예약 목록 화면 → 증상메모 변경 팝업");
-			if (textInsert == null) {
-				textInsert = new TextInsertFrame(dbdao, 1, "증상메모 입력");
+			if (selectRowCheck()) {
+				System.out.println("예약 목록 화면 → 증상메모 변경 팝업");
+				reservdto = rList.get(rowSel);
+				if (textInsert == null) {
+					textInsert = new TextInsertFrame(dbdao, doctordto, reservdto, 1);
+				}
+				this.setVisible(false);
+				textInsert.setVisible(true);
+			} else {
+				System.out.println(rowSel + "번!");
 			}
-			this.setVisible(false);
-			textInsert.setVisible(true);
-		} else if (e.getSource() == cancleBtn) {
-			System.out.println("예약 목록 화면 → 취소사유 등록 팝업");
-			if (textInsert == null) {
-				textInsert = new TextInsertFrame(dbdao, 2, "취소사유 입력");
+		} else if (e.getSource() == cancelBtn) {
+			if (selectRowCheck()) {
+				System.out.println("예약 목록 화면 → 취소사유 등록 팝업");
+				reservdto = rList.get(rowSel);
+				if (textInsert == null) {
+					textInsert = new TextInsertFrame(dbdao, doctordto, reservdto, 2);
+				}
+				this.setVisible(false);
+				textInsert.setVisible(true);
+			} else {
+				System.out.println(rowSel + "번!");
 			}
-			this.setVisible(false);
-			textInsert.setVisible(true);
+		}
+	}
+	public boolean selectRowCheck() {
+		if (rowSel >= 0) {
+			return true;
+		} else {
+			selectRowCheckLabel.setBounds(30, 575, 145, 50);
+			selectRowCheckLabel.setForeground(Color.RED);
+			selectRowCheckLabel.setText("행이 선택되지 않았습니다.");
+			return false;
 		}
 	}
 }
