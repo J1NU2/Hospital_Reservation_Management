@@ -10,12 +10,14 @@ public interface DBdao {
 	// 추상메서드
 	// 일반회원
 	public void patientSignUp(PatientDTO patientdto);				// 일반회원 회원가입
-	public PatientDTO patientLogin(String findId, String findPwd);	// 로그인
+	public PatientDTO patientLogin(String findId, String findPwd);	// 일반회원 로그인
 	public boolean patientIdCheck(String findId);					// 회원가입 시 아이디 중복 체크
 	public boolean patientIdenCheck(String findId);					// 회원가입 시 주민번호 중복 체크
 	
 	// 관계자(의사)
-	public void doctorSignUp(DoctorDTO doctordto);		// 관계자 등록
+	public void doctorSignUp(DoctorDTO doctordto);					// 의사 등록
+	public DoctorDTO doctorLogin(String findNum, String findPwd);	// 의사 로그인
+	public boolean doctorNumCheck(String findNum);					// 회원가입 시 아이디 중복 체크
 	
 	// 예약관련
 	public ArrayList<DoctorDTO> doctorAll();							// 예약 시 의사 목록
