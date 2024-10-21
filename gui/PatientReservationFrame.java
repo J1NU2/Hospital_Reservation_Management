@@ -67,7 +67,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 	private JTableHeader reservListColName = reservListOne.getTableHeader();
 	private String[] reservListAllCol = {"환자명", "주민번호", "의사이름", "의사번호", 
 										"예약날짜", "예약시간", "증상메모", "취소사유"};
-	private String[][] reservListAllRow = {};
+	private String[][] reservListAllRow = null;
 	private DefaultTableModel modelAll = new DefaultTableModel(reservListAllRow, reservListAllCol) {
 		@Override
 		public boolean isCellEditable(int row, int column) {
