@@ -185,14 +185,13 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 			public void keyTyped(KeyEvent e) {
 				JTextField leng = (JTextField) e.getSource();
 				char text = e.getKeyChar();
-				int textASC = text;
 				if (leng.getText().length() >= 8) e.consume();
 				// 아스키코드값
 				// 44032 : 가 ~ 55203 : 힣
 				// 65 : A ~ 90 : Z
 				// 97 : a ~ 122 : z
 				if (!((text >= 65 && text <= 90) || (text >= 97 && text <= 122) || 
-						(textASC >= 44032 && textASC <= 55203))) {
+						(text >= 44032 && text <= 55203))) {
 					e.consume();
 				}
 			}
