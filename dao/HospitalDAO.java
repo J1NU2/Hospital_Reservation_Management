@@ -355,7 +355,49 @@ public class HospitalDAO implements DBdao {
 		}
 		return dList;
 	}
-	// 예약 시 의사를 선택하면 해당 의사의 정보가 DB에 있는지 조회
+	// 일반회원 한명의 정보 리턴
+	@Override
+	public PatientDTO patientOne(String findIden) {
+		if (conn()) {
+			try {
+				System.out.println("★ 데이터베이스 연결 성공");
+				String sql = "SELECT * FROM patient WHERE identity_num=?";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, findIden);
+				
+				ResultSet rs = pstmt.executeQuery();
+				while (rs.next()) {
+					PatientDTO temp = new PatientDTO();
+					temp.setIdentityNum(rs.getString("identity_num"));
+					temp.setId(rs.getString("patient_id"));
+					temp.setPwd(rs.getString("patient_pwd"));
+					temp.setName(rs.getString("patient_name"));
+					temp.setAge(rs.getInt("patient_age"));
+					temp.setGender(rs.getString("patient_gender"));
+					temp.setPhone(rs.getString("patient_phone"));
+					temp.setCreatedAt(rs.getString("created_at"));
+					return temp;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("☆ 데이터베이스 작업 에러 발생");
+			} finally {
+				if (conn != null) {
+					try {
+						conn.close();
+						System.out.println("★ 커넥션 자원 반납 성공");
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("☆ 커넥션 자원 반납 실패");
+					}
+				}
+			}
+		} else {
+			System.out.println("★ 데이터베이스 연결 실패");
+		}
+		return null;
+	}
+	// 의사 한명의 정보 리턴
 	@Override
 	public DoctorDTO doctorOne(String findNum) {
 		if (conn()) {
@@ -438,7 +480,7 @@ public class HospitalDAO implements DBdao {
 		if (conn()) {
 			try {
 				System.out.println("★ 데이터베이스 연결 성공");
-				String sql = "SELECT * FROM reservation WHERE identity_num=? AND medical_check='N'";
+				String sql = "SELECT * FROM reservation WHERE identity_num=? AND medical_check='N' AND cancel_reason IS NULL";
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, findIden);
 				
@@ -479,7 +521,8 @@ public class HospitalDAO implements DBdao {
 		if (conn()) {
 			try {
 				System.out.println("★ 데이터베이스 연결 성공");
-				String sql = "SELECT * FROM reservation WHERE reserv_date=? AND reserv_time=? AND doctor_num=?";
+				String sql = "SELECT * FROM reservation "
+						+ "WHERE reserv_date=? AND reserv_time=? AND doctor_num=? AND cancel_reason IS NULL";
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, findDate);
 				pstmt.setString(2, findTime);
@@ -522,9 +565,88 @@ public class HospitalDAO implements DBdao {
 		if (conn()) {
 			try {
 				System.out.println("★ 데이터베이스 연결 성공");
-				String sql = "DELETE FROM reservation WHERE identity_num=? AND medical_check='N'";
+				String sql = "DELETE FROM reservation "
+						+ "WHERE identity_num=? AND medical_check='N' AND cancel_reason IS NULL";
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, findIden);
+				
+				int resultInt = pstmt.executeUpdate();
+				
+				if (resultInt > 0) {
+					conn.commit();
+				} else {
+					conn.rollback();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("☆ 데이터베이스 작업 에러 발생");
+			} finally {
+				if (conn != null) {
+					try {
+						conn.close();
+						System.out.println("★ 커넥션 자원 반납 성공");
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("☆ 커넥션 자원 반납 실패");
+					}
+				}
+			}
+		} else {
+			System.out.println("★ 데이터베이스 연결 실패");
+		}
+	}
+	// 진료여부, 증상메모 변경
+	@Override
+	public void reservationMod(ReservationDTO reservdto, String modMemo) {
+		if (conn()) {
+			try {
+				System.out.println("★ 데이터베이스 연결 성공");
+				String sql = "UPDATE reservation SET medical_check='Y', symptoms_memo=? "
+						+ "WHERE reserv_date=? AND reserv_time=? AND doctor_num=?";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, modMemo);
+				pstmt.setString(2, reservdto.getDate());
+				pstmt.setString(3, reservdto.getTime());
+				pstmt.setString(4, reservdto.getDoctorNum());
+				
+				int resultInt = pstmt.executeUpdate();
+				
+				if (resultInt > 0) {
+					conn.commit();
+				} else {
+					conn.rollback();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("☆ 데이터베이스 작업 에러 발생");
+			} finally {
+				if (conn != null) {
+					try {
+						conn.close();
+						System.out.println("★ 커넥션 자원 반납 성공");
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("☆ 커넥션 자원 반납 실패");
+					}
+				}
+			}
+		} else {
+			System.out.println("★ 데이터베이스 연결 실패");
+		}
+	}
+	// 취소사유 변경
+	@Override
+	public void reservationCancel(ReservationDTO reservdto, String modReason) {
+		if (conn()) {
+			try {
+				System.out.println("★ 데이터베이스 연결 성공");
+				String sql = "UPDATE reservation SET symptoms_memo=? "
+						+ "WHERE reserv_date=? AND reserv_time=? AND doctor_num=?";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, modReason);
+				pstmt.setString(2, reservdto.getDate());
+				pstmt.setString(3, reservdto.getTime());
+				pstmt.setString(4, reservdto.getDoctorNum());
 				
 				int resultInt = pstmt.executeUpdate();
 				
@@ -596,14 +718,14 @@ public class HospitalDAO implements DBdao {
 	}
 	// 로그인한 의사에게 예약한 모든 내역 조회
 	@Override
-	public ArrayList<ReservationDTO> reservationDoctorAll(String findDoc) {
+	public ArrayList<ReservationDTO> reservationDoctorAll(String findNum) {
 		ArrayList<ReservationDTO> rList = new ArrayList<ReservationDTO>();
 		if (conn()) {
 			try {
 				System.out.println("★ 데이터베이스 연결 성공");
-				String sql = "SELECT * FROM reservation WHERE doctor_num=?";
+				String sql = "SELECT * FROM reservation WHERE doctor_num=? AND medical_check='N'";
 				PreparedStatement pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, findDoc);
+				pstmt.setString(1, findNum);
 				
 				ResultSet rs = pstmt.executeQuery();
 				while (rs.next()) {
