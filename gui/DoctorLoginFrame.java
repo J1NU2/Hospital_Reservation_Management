@@ -11,13 +11,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import dao.DBdao;
+import dto.DoctorDTO;
 
 public class DoctorLoginFrame extends JFrame implements ActionListener {
 	private JPanel mainPanel = new JPanel();
 	private JLabel titleLabel = new JLabel("병원 예약 관리 시스템");
 	private JLabel numLabel = new JLabel("의사번호");
 	private JLabel pwdLabel = new JLabel("비밀번호");
-	private JTextField idInput = new JTextField();
+	private JTextField numInput = new JTextField();
 	private JTextField pwdInput = new JTextField();
 	private JButton loginBtn = new JButton("로그인");
 	private JButton signupBtn = new JButton("관계자 등록");
@@ -29,6 +30,7 @@ public class DoctorLoginFrame extends JFrame implements ActionListener {
 	private DoctorMedicalListFrame doctorMedicalList = null;
 	
 	private DBdao dbdao = null;
+	private DoctorDTO doctordto = null;
 	public DoctorLoginFrame(DBdao db) {
 		this.dbdao = db;
 		
@@ -44,8 +46,8 @@ public class DoctorLoginFrame extends JFrame implements ActionListener {
 		pwdLabel.setBounds(125, 112, 50, 50);
 		mainPanel.add(pwdLabel);
 		
-		idInput.setBounds(190, 85, 170, 25);
-		mainPanel.add(idInput);
+		numInput.setBounds(190, 85, 170, 25);
+		mainPanel.add(numInput);
 		pwdInput.setBounds(190, 125, 170, 25);
 		mainPanel.add(pwdInput);
 		
@@ -75,11 +77,12 @@ public class DoctorLoginFrame extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == loginBtn) {
 			// 로그인
-			if (true) {
+			if (LoginCheck()) {
+				System.out.println("◆ 로그인한 DTO 정보: " + doctordto);
 				// 로그인 성공
 				System.out.println("관계자 로그인 화면 → 예약 목록 화면");
 				if (doctorMedicalList == null) {
-					doctorMedicalList = new DoctorMedicalListFrame(dbdao);
+					doctorMedicalList = new DoctorMedicalListFrame(dbdao, doctordto);
 				}
 				this.setVisible(false);
 				doctorMedicalList.setVisible(true);
@@ -107,5 +110,14 @@ public class DoctorLoginFrame extends JFrame implements ActionListener {
 			this.setVisible(false);
 			mainF.setVisible(true);
 		}
+	}
+	
+	// 로그인 시 DB에 의사 정보가 없으면 true, 있으면 false
+	public boolean LoginCheck() {
+		doctordto = dbdao.doctorLogin(numInput.getText(), pwdInput.getText());
+		if (doctordto == null) {
+			return false;
+		}
+		return true;
 	}
 }
