@@ -205,12 +205,26 @@ public class HospitalDAO implements DBdao {
 		return false;
 	}
 	
-	// 관계자 등록
+	// 관계자(의사) 등록
 	@Override
 	public void doctorSignUp(DoctorDTO doctordto) {
 		if (conn()) {
 			try {
 				System.out.println("★ 데이터베이스 연결 성공");
+				String sql = "INSERT INTO doctor VALUES(?,?,?,?)";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, doctordto.getNum());
+				pstmt.setString(2, doctordto.getPwd());
+				pstmt.setString(3, doctordto.getName());
+				pstmt.setString(4, doctordto.getMajor());
+				
+				int resultInt = pstmt.executeUpdate();
+				
+				if (resultInt > 0) {
+					conn.commit();
+				} else {
+					conn.rollback();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("☆ 데이터베이스 작업 에러 발생");
@@ -228,6 +242,78 @@ public class HospitalDAO implements DBdao {
 		} else {
 			System.out.println("★ 데이터베이스 연결 실패");
 		}
+	}
+	// 관계자(의사) 로그인 시 DB에 있는지 조회
+	@Override
+	public DoctorDTO doctorLogin(String findNum, String findPwd) {
+		if (conn()) {
+			System.out.println("★ 데이터베이스 연결 성공");
+			try {
+				String sql = "SELECT * FROM doctor WHERE doctor_num=? AND doctor_pwd=?";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, findNum);
+				pstmt.setString(2, findPwd);
+				
+				ResultSet rs = pstmt.executeQuery();
+				while (rs.next()) {
+					DoctorDTO temp = new DoctorDTO();
+					temp.setNum(rs.getString("doctor_num"));
+					temp.setPwd(rs.getString("doctor_pwd"));
+					temp.setName(rs.getString("doctor_name"));
+					temp.setMajor(rs.getString("doctor_major"));
+					return temp;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("☆ 데이터베이스 작업 에러 발생");
+			} finally {
+				if (conn != null) {
+					try {
+						conn.close();
+						System.out.println("★ 커넥션 자원 반납 성공");
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("☆ 커넥션 자원 반납 실패");
+					}
+				}
+			}
+		} else {
+			System.out.println("★ 데이터베이스 연결 실패");
+		}
+		return null;
+	}
+	// 의사 등록 시 의사번호가 DB에 있는지 조회
+	@Override
+	public boolean doctorNumCheck(String findNum) {
+		if (conn()) {
+			System.out.println("★ 데이터베이스 연결 성공");
+			try {
+				String sql = "SELECT * FROM doctor WHERE doctor_num=?";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, findNum);
+				
+				ResultSet rs = pstmt.executeQuery();
+				while (rs.next()) {
+					return true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("☆ 데이터베이스 작업 에러 발생");
+			} finally {
+				if (conn != null) {
+					try {
+						conn.close();
+						System.out.println("★ 커넥션 자원 반납 성공");
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("☆ 커넥션 자원 반납 실패");
+					}
+				}
+			}
+		} else {
+			System.out.println("★ 데이터베이스 연결 실패");
+		}
+		return false;
 	}
 	
 	// 예약 시 의사 DB 정보 전체 조회
