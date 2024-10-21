@@ -325,7 +325,6 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 					dbdao.reservationAdd(reservdto);
 					
 					reservCheckLabel.setText("");
-					
 					this.setVisible(false);
 					new PatientReservationFrame(dbdao, patientdto);
 				} else if (!(reservCurrentCheck == null)) {
