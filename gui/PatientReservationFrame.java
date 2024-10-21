@@ -39,6 +39,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 	private JLabel reservDateLabel = new JLabel("예약날짜");
 	private JLabel reservTimeLabel = new JLabel("예약시간");
 	private JLabel reservCheckLabel = new JLabel();
+	private JLabel reservCancelLabel = new JLabel();
 	private JLabel reservListLabel = new JLabel("현재 예약 내역");
 	private JLabel reservListAllLabel = new JLabel("전체 예약 내역");
 	
@@ -55,9 +56,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 	private Choice minuteChoice = new Choice();
 	
 	private String[] reservListCol = {"환자명", "주민등록번호", "의사이름", "의사번호", "예약날짜", "예약시간"};
-//	private String[][] reservListRow = new String[1][6];
-	// 테스트값
-	private String[][] reservListRow = {{"환자명", "주민등록번호", "의사이름", "의사번호", "예약날짜", "예약시간"}};
+	private String[][] reservListRow = null;
 	private DefaultTableModel modelOne = new DefaultTableModel(reservListRow, reservListCol) {
 		@Override
 		public boolean isCellEditable(int row, int column) {
@@ -67,22 +66,8 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 	private JTable reservListOne = new JTable(modelOne);
 	private JTableHeader reservListColName = reservListOne.getTableHeader();
 	private String[] reservListAllCol = {"환자명", "주민번호", "의사이름", "의사번호", 
-										"예약날짜", "예약시간", "증상메모","취소사유"};
-	private String[][] reservListAllRow = null;
-	// 테스트값
-//	private String[][] reservListAllRow = {{"환자명", "주민번호", "의사이름", "의사번호", 
-//		"예약날짜", "예약시간", "증상메모","취소사유"},{"환자명", "주민번호", "의사이름", "의사번호", 
-//			"예약날짜", "예약시간", "증상메모","취소사유"},{"환자명", "주민번호", "의사이름", "의사번호", 
-//				"예약날짜", "예약시간", "증상메모","취소사유"},{"환자명", "주민번호", "의사이름", "의사번호", 
-//					"예약날짜", "예약시간", "증상메모","취소사유"},{"환자명", "주민번호", "의사이름", "의사번호", 
-//						"예약날짜", "예약시간", "증상메모","취소사유"},{"환자명", "주민번호", "의사이름", "의사번호", 
-//							"예약날짜", "예약시간", "증상메모","취소사유"},{"환자명", "주민번호", "의사이름", "의사번호", 
-//								"예약날짜", "예약시간", "증상메모","취소사유"},{"환자명", "주민번호", "의사이름", "의사번호", 
-//									"예약날짜", "예약시간", "증상메모","취소사유"},{"환자명", "주민번호", "의사이름", "의사번호", 
-//										"예약날짜", "예약시간", "증상메모","취소사유"},{"환자명", "주민번호", "의사이름", "의사번호", 
-//											"예약날짜", "예약시간", "증상메모","취소사유"},{"환자명", "주민번호", "의사이름", "의사번호", 
-//												"예약날짜", "예약시간", "증상메모","취소사유"},{"환자명", "주민번호", "의사이름", "의사번호", 
-//													"예약날짜", "예약시간", "증상메모","취소사유"}};
+										"예약날짜", "예약시간", "증상메모", "취소사유"};
+	private String[][] reservListAllRow = {};
 	private DefaultTableModel modelAll = new DefaultTableModel(reservListAllRow, reservListAllCol) {
 		@Override
 		public boolean isCellEditable(int row, int column) {
@@ -94,14 +79,14 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 	
 	private JButton logoutBtn = new JButton("로그아웃");
 	private JButton reservBtn = new JButton("예약하기");
-	private JButton cancleBtn = new JButton("취소하기");
+	private JButton cancelBtn = new JButton("취소하기");
 	
 	private PatientLoginFrame patientLogin = null;
 	
 	private DBdao dbdao = null;
 	private PatientDTO patientdto = null;
-	private DoctorDTO doctordto = null;
 	private ArrayList<DoctorDTO> dList = null;
+	private ArrayList<ReservationDTO> rList= null;
 	
 	private Calendar current = Calendar.getInstance();
 	
@@ -116,6 +101,10 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		this.dbdao = db;
 		this.patientdto = patientdto;
 		this.dList = dbdao.doctorAll();
+		this.rList = dbdao.reservationPatientAll(patientdto.getIdentityNum());
+		for (int i=0; i<rList.size(); i++) {
+			System.out.println(rList.get(i).toString());
+		}
 		
 		// AbsoluteLayout
 		mainPanel.setLayout(null);
@@ -231,12 +220,24 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		
 		mainPanel.add(reservPanel);
 		
-		// 현재 예약 내역
 		reservListPanel.setLayout(null);
 		reservListPanel.setBounds(60, 285, 545, 200);
 		reservListPanel.setBackground(Color.LIGHT_GRAY);
 		reservListLabel.setBounds(15, -5, 80, 50);
 		reservListPanel.add(reservListLabel);
+		
+		try {
+			ReservationDTO reservCurrent = dbdao.reservationCurrent(patientdto.getIdentityNum());
+			DoctorDTO reservDoctor = dbdao.doctorOne(reservCurrent.getDoctorNum());
+			String[] rowData = new String[6];
+			rowData[0] = patientdto.getName();
+			rowData[1] = patientdto.getIdentityNum();
+			rowData[2] = reservDoctor.getName();
+			rowData[3] = reservDoctor.getNum();
+			rowData[4] = reservCurrent.getDate();
+			rowData[5] = reservCurrent.getTime();
+			modelOne.addRow(rowData);
+		} catch (Exception e) {}
 		
 		reservListColName.setBounds(25, 50, 500, 30);
 		reservListPanel.add(reservListColName);
@@ -244,8 +245,10 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		reservListOne.setRowHeight(50);
 		reservListPanel.add(reservListOne);
 		
-		cancleBtn.setBounds(440, 150, 85, 30);
-		reservListPanel.add(cancleBtn);
+		reservListPanel.add(reservCancelLabel);
+		
+		cancelBtn.setBounds(440, 150, 85, 30);
+		reservListPanel.add(cancelBtn);
 		
 		mainPanel.add(reservListPanel);
 		
@@ -256,6 +259,22 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		reservListAllLabel.setBounds(15, -5, 80, 50);
 		reservListAllPanel.add(reservListAllLabel);
 		
+		try {
+			for (int i=0; i<rList.size(); i++) {
+				DoctorDTO reservDoctor = dbdao.doctorOne(rList.get(i).getDoctorNum());
+				String[] rowData = new String[8];
+				rowData[0] = patientdto.getName();
+				rowData[1] = patientdto.getIdentityNum();
+				rowData[2] = reservDoctor.getName();
+				rowData[3] = reservDoctor.getNum();
+				rowData[4] = rList.get(i).getDate().substring(2);
+				rowData[5] = rList.get(i).getTime();
+				rowData[6] = rList.get(i).getSymptomsMemo();
+				rowData[7] = rList.get(i).getCancelReason();
+				modelAll.addRow(rowData);
+			}
+		} catch (Exception e) {}
+		
 		reservListAllScrollPane.setBounds(25, 40, 500, 170);
 		reservListAllPanel.add(reservListAllScrollPane);
 		
@@ -263,7 +282,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		
 		logoutBtn.addActionListener(this);
 		reservBtn.addActionListener(this);
-		cancleBtn.addActionListener(this);
+		cancelBtn.addActionListener(this);
 		
 		this.add(mainPanel);
 		
@@ -278,6 +297,13 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 	// 이벤트 발생 메서드
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		String reservDate = year + "." + month + "." + day;
+		String reservTime = hour + ":" + minute;
+		
+		ReservationDTO reservCurrentCheck = dbdao.reservationCurrent(patientdto.getIdentityNum());
+		ReservationDTO reservDoctorCurrentCheck = dbdao.reservationCurrentDoctor(
+				reservDate, reservTime, doctorNumText.getText());
+		
 		if (e.getSource() == logoutBtn) {
 			System.out.println("로그아웃");
 			System.out.println("예약하기 화면 → 일반회원 로그인 화면");
@@ -287,32 +313,54 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 			this.setVisible(false);
 			patientLogin.setVisible(true);
 		} else if (e.getSource() == reservBtn) {
-			System.out.println("예약하기 성공");
-			// 코드 작성
 			if (reservationBlankCheck()) {
-				ReservationDTO reservdto = new ReservationDTO();
-				reservdto.setIdentityNum(patientdto.getIdentityNum());
-				reservdto.setDoctorNum(doctorNumText.getText());
-				String reservDate = year + "." + month + "." + day;
-				reservdto.setDate(reservDate);
-				String reservTime = hour + ":" + minute;
-				reservdto.setTime(reservTime);
-				dbdao.reservationAdd(reservdto);
-				
-				reservCheckLabel.setText("");
-				
-				this.setVisible(false);
-				new PatientReservationFrame(dbdao, patientdto);
+				if (reservCurrentCheck == null && reservDoctorCurrentCheck == null) {
+					System.out.println("예약하기 성공");
+					ReservationDTO reservdto = new ReservationDTO();
+					reservdto.setIdentityNum(patientdto.getIdentityNum());
+					reservdto.setDoctorNum(doctorNumText.getText());
+					reservdto.setDate(reservDate);
+					reservdto.setTime(reservTime);
+					
+					dbdao.reservationAdd(reservdto);
+					
+					reservCheckLabel.setText("");
+					
+					this.setVisible(false);
+					new PatientReservationFrame(dbdao, patientdto);
+				} else if (!(reservCurrentCheck == null)) {
+					System.out.println("예약하기 실패 : 이미 예약한 내역이 존재");
+					reservCheckLabel.setBounds(255, 140, 170, 50);
+					reservCheckLabel.setText("이미 예약한 내역이 존재합니다.");
+					reservCheckLabel.setForeground(Color.RED);
+				} else if (!(reservDoctorCurrentCheck == null)) {
+					System.out.println("예약하기 실패 : 예약한 의사의 날짜/시간에 다른 사람이 예약한 경우");
+					reservCheckLabel.setBounds(220, 140, 210, 50);
+					reservCheckLabel.setText("다른 사람이 예약한 내역이 존재합니다.");
+					reservCheckLabel.setForeground(Color.RED);
+				}
 			} else {
-				System.out.println("예약하기 실패");
+				System.out.println("예약하기 실패 : 빈칸 존재");
 				reservCheckLabel.setBounds(270, 140, 155, 50);
 				reservCheckLabel.setText("빈칸이 있는지 확인해주세요.");
 				reservCheckLabel.setForeground(Color.RED);
 			}
-		} else if (e.getSource() == cancleBtn) {
+		} else if (e.getSource() == cancelBtn) {
 			System.out.println("현재 예약 취소");
 			// 코드 작성
-			super.repaint();
+			if (!(reservCurrentCheck == null)) {
+				System.out.println("예약취소 성공");
+				
+				dbdao.reservationDel(patientdto.getIdentityNum());
+				
+				this.setVisible(false);
+				new PatientReservationFrame(dbdao, patientdto);
+			} else {
+				System.out.println("예약취소 실패 : 예약한 내역이 존재하지 않음");
+				reservCancelLabel.setBounds(215, 140, 210, 50);
+				reservCancelLabel.setText("현재 예약한 내역이 존재하지 않습니다.");
+				reservCancelLabel.setForeground(Color.RED);
+			}
 		}
 	}
 	@Override
@@ -325,7 +373,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 				doctorName = doctorNameChoice.getSelectedItem().substring(0, doctorNameIndex);
 				String doctorNum = doctorNameChoice.getSelectedItem().substring((doctorNameIndex + 1), doctorNumIndex);
 				
-				doctordto = dbdao.doctorOne(doctorNum);
+				DoctorDTO doctordto = dbdao.doctorOne(doctorNum);
 				
 				doctorNumText.setText(doctordto.getNum());
 				doctorMajorText.setText(doctordto.getMajor());
