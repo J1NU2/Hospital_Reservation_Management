@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-import javax.print.Doc;
-
 import dto.DoctorDTO;
 import dto.PatientDTO;
 import dto.ReservationDTO;
@@ -350,10 +348,26 @@ public class HospitalDAO implements DBdao {
 	}
 	// 일반회원이 현재 예약한 내역 조회
 	@Override
-	public ReservationDTO selectOne(PatientDTO patientdto) {
+	public ReservationDTO reservationCurrent(String findIden) {
 		if (conn()) {
 			try {
 				System.out.println("★ 데이터베이스 연결 성공");
+				String sql = "SELECT * FROM reservation WHERE identity_num=? AND medical_check='N'";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, findIden);
+				
+				ResultSet rs = pstmt.executeQuery();
+				while (rs.next()) {
+					ReservationDTO temp = new ReservationDTO();
+					temp.setDate(rs.getString("reserv_date"));
+					temp.setTime(rs.getString("reserv_time"));
+					temp.setIdentityNum(rs.getString("identity_num"));
+					temp.setDoctorNum(rs.getString("doctor_num"));
+					temp.setMedicalCheck(rs.getString("medical_check"));
+					temp.setSymptomsMemo(rs.getString("symptoms_memo"));
+					temp.setCancelReason(rs.getString("cancel_reason"));
+					return temp;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("☆ 데이터베이스 작업 에러 발생");
@@ -373,12 +387,30 @@ public class HospitalDAO implements DBdao {
 		}
 		return null;
 	}
-	// 예약 내역 전체 조회
+	// 선택한 의사에게 예약한 날짜/시간이 겹치는 내역
 	@Override
-	public ArrayList<ReservationDTO> selectAll() {
+	public ReservationDTO reservationCurrentDoctor(String findDate, String findTime, String findDoc) {
 		if (conn()) {
 			try {
 				System.out.println("★ 데이터베이스 연결 성공");
+				String sql = "SELECT * FROM reservation WHERE reserv_date=? AND reserv_time=? AND doctor_num=?";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, findDate);
+				pstmt.setString(2, findTime);
+				pstmt.setString(3, findDoc);
+				
+				ResultSet rs = pstmt.executeQuery();
+				while (rs.next()) {
+					ReservationDTO temp = new ReservationDTO();
+					temp.setDate(rs.getString("reserv_date"));
+					temp.setTime(rs.getString("reserv_time"));
+					temp.setIdentityNum(rs.getString("identity_num"));
+					temp.setDoctorNum(rs.getString("doctor_num"));
+					temp.setMedicalCheck(rs.getString("medical_check"));
+					temp.setSymptomsMemo(rs.getString("symptoms_memo"));
+					temp.setCancelReason(rs.getString("cancel_reason"));
+					return temp;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("☆ 데이터베이스 작업 에러 발생");
@@ -398,6 +430,126 @@ public class HospitalDAO implements DBdao {
 		}
 		return null;
 	}
-
+	// 현재 예약 취소
+	@Override
+	public void reservationDel(String findIden) {
+		if (conn()) {
+			try {
+				System.out.println("★ 데이터베이스 연결 성공");
+				String sql = "DELETE FROM reservation WHERE identity_num=? AND medical_check='N'";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, findIden);
+				
+				int resultInt = pstmt.executeUpdate();
+				
+				if (resultInt > 0) {
+					conn.commit();
+				} else {
+					conn.rollback();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("☆ 데이터베이스 작업 에러 발생");
+			} finally {
+				if (conn != null) {
+					try {
+						conn.close();
+						System.out.println("★ 커넥션 자원 반납 성공");
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("☆ 커넥션 자원 반납 실패");
+					}
+				}
+			}
+		} else {
+			System.out.println("★ 데이터베이스 연결 실패");
+		}
+	}
+	// 로그인한 환자가 예약한 모든 내역 조회
+	@Override
+	public ArrayList<ReservationDTO> reservationPatientAll(String findiden) {
+		ArrayList<ReservationDTO> rList = new ArrayList<ReservationDTO>();
+		if (conn()) {
+			try {
+				System.out.println("★ 데이터베이스 연결 성공");
+				String sql = "SELECT * FROM reservation WHERE identity_num=?";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, findiden);
+				
+				ResultSet rs = pstmt.executeQuery();
+				while (rs.next()) {
+					ReservationDTO temp = new ReservationDTO();
+					temp.setDate(rs.getString("reserv_date"));
+					temp.setTime(rs.getString("reserv_time"));
+					temp.setIdentityNum(rs.getString("identity_num"));
+					temp.setDoctorNum(rs.getString("doctor_num"));
+					temp.setMedicalCheck(rs.getString("medical_check"));
+					temp.setSymptomsMemo(rs.getString("symptoms_memo"));
+					temp.setCancelReason(rs.getString("cancel_reason"));
+					rList.add(temp);
+				}
+				return rList;
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("☆ 데이터베이스 작업 에러 발생");
+			} finally {
+				if (conn != null) {
+					try {
+						conn.close();
+						System.out.println("★ 커넥션 자원 반납 성공");
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("☆ 커넥션 자원 반납 실패");
+					}
+				}
+			}
+		} else {
+			System.out.println("★ 데이터베이스 연결 실패");
+		}
+		return null;
+	}
+	// 로그인한 의사에게 예약한 모든 내역 조회
+	@Override
+	public ArrayList<ReservationDTO> reservationDoctorAll(String findDoc) {
+		ArrayList<ReservationDTO> rList = new ArrayList<ReservationDTO>();
+		if (conn()) {
+			try {
+				System.out.println("★ 데이터베이스 연결 성공");
+				String sql = "SELECT * FROM reservation WHERE doctor_num=?";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, findDoc);
+				
+				ResultSet rs = pstmt.executeQuery();
+				while (rs.next()) {
+					ReservationDTO temp = new ReservationDTO();
+					temp.setDate(rs.getString("reserv_date"));
+					temp.setTime(rs.getString("reserv_time"));
+					temp.setIdentityNum(rs.getString("identity_num"));
+					temp.setDoctorNum(rs.getString("doctor_num"));
+					temp.setMedicalCheck(rs.getString("medical_check"));
+					temp.setSymptomsMemo(rs.getString("symptoms_memo"));
+					temp.setCancelReason(rs.getString("cancel_reason"));
+					rList.add(temp);
+				}
+				return rList;
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("☆ 데이터베이스 작업 에러 발생");
+			} finally {
+				if (conn != null) {
+					try {
+						conn.close();
+						System.out.println("★ 커넥션 자원 반납 성공");
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("☆ 커넥션 자원 반납 실패");
+					}
+				}
+			}
+		} else {
+			System.out.println("★ 데이터베이스 연결 실패");
+		}
+		return null;
+	}
 
 }
