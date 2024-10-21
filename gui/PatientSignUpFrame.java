@@ -71,7 +71,6 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 		idLabel.setBounds(130, 60, 40, 50);
 		mainPanel.add(idLabel);
 		idCheckLabel.setBounds(204, 82, 145, 50);
-		idCheckLabel.setForeground(Color.RED);
 		mainPanel.add(idCheckLabel);
 		pwd1Label.setBounds(125, 105, 50, 50);
 		mainPanel.add(pwd1Label);
@@ -84,7 +83,6 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 		idenLabel.setBounds(112, 240, 75, 50);
 		mainPanel.add(idenLabel);
 		idenCheckLabel.setBounds(204, 262, 155, 50);
-		idenCheckLabel.setForeground(Color.RED);
 		mainPanel.add(idenCheckLabel);
 		ageLabel.setBounds(150, 285, 25, 50);
 		mainPanel.add(ageLabel);
