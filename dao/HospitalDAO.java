@@ -635,7 +635,7 @@ public class HospitalDAO implements DBdao {
 		if (conn()) {
 			try {
 				System.out.println("★ 데이터베이스 연결 성공");
-				String sql = "UPDATE reservation SET symptoms_memo=? "
+				String sql = "UPDATE reservation SET cancel_reason=? "
 						+ "WHERE reserv_date=? AND reserv_time=? AND doctor_num=?";
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, modReason);
