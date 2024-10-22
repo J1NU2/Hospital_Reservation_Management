@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import dao.DBdao;
@@ -21,7 +22,7 @@ public class PatientLoginFrame extends JFrame implements ActionListener {
 	private JLabel pwdLabel = new JLabel("비밀번호");
 	
 	private JTextField idInput = new JTextField();
-	private JTextField pwdInput = new JTextField();
+	private JPasswordField pwdInput = new JPasswordField();
 	
 	private JButton loginBtn = new JButton("로그인");
 	private JButton signupBtn = new JButton("회원가입");
@@ -116,7 +117,8 @@ public class PatientLoginFrame extends JFrame implements ActionListener {
 	
 	// 로그인 시 DB에 회원 정보가 있다면 true, 없다면 false
 	private boolean LoginCheck() {
-		patientdto = dbdao.patientLogin(idInput.getText(), pwdInput.getText());
+		String password = new String(pwdInput.getPassword());
+		patientdto = dbdao.patientLogin(idInput.getText(), password);
 		if (patientdto == null) {
 			return false;
 		}
