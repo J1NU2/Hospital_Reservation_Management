@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import dao.DBdao;
@@ -34,8 +35,8 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 	private JLabel phoneLabel = new JLabel("휴대전화번호");
 	
 	private JTextField idInput = new JTextField();
-	private JTextField pwdInput1 = new JTextField();
-	private JTextField pwdInput2 = new JTextField();
+	private JPasswordField pwdInput1 = new JPasswordField();
+	private JPasswordField pwdInput2 = new JPasswordField();
 	private JTextField nameInput = new JTextField();
 	private JTextField idenInput1 = new JTextField();
 	private JTextField idenInput2 = new JTextField();
@@ -113,9 +114,10 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 		pwdInput1.setBounds(200, 118, 170, 25);
 		pwdInput1.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
-				JTextField leng = (JTextField) e.getSource();
+				JPasswordField leng = (JPasswordField) e.getSource();
 				char text = e.getKeyChar();
-				if (leng.getText().length() >= 20) e.consume();
+				String password = new String(leng.getPassword());
+				if (password.length() >= 20) e.consume();
 				// 아스키코드값
 				// 48 : 0 ~ 57 : 9
 				// 65 : A ~ 90 : Z
@@ -126,8 +128,8 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 				}
 			}
 			public void keyReleased(KeyEvent e) {
-				String pwd1 = pwdInput1.getText();
-				String pwd2 = pwdInput2.getText();
+				String pwd1 = new String(pwdInput1.getPassword());
+				String pwd2 = new String(pwdInput2.getPassword());
 				if (pwd1.equals(pwd2) && !(pwd1.isEmpty()) && !(pwd2.isEmpty())) {
 					System.out.println("패스워드 일치");
 					pwdCheckLabel.setText("비밀번호가 일치합니다.");
@@ -149,9 +151,10 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 		pwdInput2.setBounds(200, 163, 170, 25);
 		pwdInput2.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
-				JTextField leng = (JTextField) e.getSource();
+				JPasswordField leng = (JPasswordField) e.getSource();
 				char text = e.getKeyChar();
-				if (leng.getText().length() >= 20) e.consume();
+				String password = new String(leng.getPassword());
+				if (password.length() >= 20) e.consume();
 				// 아스키코드값
 				// 48 : 0 ~ 57 : 9
 				// 65 : A ~ 90 : Z
@@ -162,8 +165,8 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 				}
 			}
 			public void keyReleased(KeyEvent e) {
-				String pwd1 = pwdInput1.getText();
-				String pwd2 = pwdInput2.getText();
+				String pwd1 = new String(pwdInput1.getPassword());
+				String pwd2 = new String(pwdInput2.getPassword());
 				if (pwd1.equals(pwd2) && !(pwd1.isEmpty()) && !(pwd2.isEmpty())) {
 					System.out.println("패스워드 일치");
 					pwdCheckLabel.setText("비밀번호가 일치합니다.");
@@ -320,7 +323,8 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 					String identityNum = idenInput1.getText() + "-" + idenInput2.getText();
 					patientdto.setIdentityNum(identityNum);
 					patientdto.setId(idInput.getText());
-					patientdto.setPwd(pwdInput2.getText());
+					String password = new String(pwdInput2.getPassword());
+					patientdto.setPwd(password);
 					patientdto.setName(nameInput.getText());
 					patientdto.setAge(Integer.parseInt(ageText.getText()));
 					patientdto.setGender(genderText.getText());
@@ -458,12 +462,13 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 	
 	// 회원가입 시 누락된 정보가 없으면 true, 하나라도 있으면 false
 	private boolean signupBlankCheck() {
-		if (idInput.getText().isEmpty() || pwdInput1.getText().isEmpty() || 
-				pwdInput2.getText().isEmpty() || nameInput.getText().isEmpty() || 
-				idenInput1.getText().isEmpty() || idenInput1.getText().isEmpty() || 
-				ageText.getText().isEmpty() || genderText.getText().isEmpty() || 
-				phoneInput1.getText().isEmpty() || phoneInput2.getText().isEmpty() || 
-				phoneInput3.getText().isEmpty()) {
+		String pwd1 = new String(pwdInput1.getPassword());
+		String pwd2 = new String(pwdInput2.getPassword());
+		if (idInput.getText().isEmpty() || pwd1.length() == 0 || pwd2.length() == 0 || 
+				nameInput.getText().isEmpty() || idenInput1.getText().isEmpty() || 
+				idenInput1.getText().isEmpty() || ageText.getText().isEmpty() || 
+				genderText.getText().isEmpty() || phoneInput1.getText().isEmpty() || 
+				phoneInput2.getText().isEmpty() || phoneInput3.getText().isEmpty()) {
 			return false;
 		}
 		return true;
