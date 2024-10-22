@@ -386,6 +386,8 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 				year = null;
 			}
 		} else if (e.getSource() == monthChoice) {		// 예약날짜(월) 선택 시
+			dayChoice.removeAll();
+			dayChoice.addItem("---- 일 ----");
 			if (!(e.toString().contains("-"))) {
 				int monthIndex = monthChoice.getSelectedItem().indexOf("월");
 				month = monthChoice.getSelectedItem().substring(0, monthIndex);
