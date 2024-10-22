@@ -1,5 +1,0 @@
-Patient
-가입날짜 INSERT : TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS')
-
-Doctor
-전공 : 내과 일반외과 정형외과 소아과 안과 이비인후과 피부과 비뇨기과 정신과 성형외과
