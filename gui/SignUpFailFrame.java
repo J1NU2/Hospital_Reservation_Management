@@ -13,33 +13,36 @@ import dao.DBdao;
 
 public class SignUpFailFrame extends JFrame implements ActionListener {
 	private JPanel mainPanel = new JPanel();
-	private JLabel fail1Label = new JLabel("빈 칸 또는 잘못된 정보가 있습니다.");
-	private JLabel fail2Label = new JLabel("확인 후 다시 입력 부탁드립니다.");
+	
+	private JLabel failLabel1 = new JLabel("빈 칸 또는 잘못된 정보가 있습니다.");
+	private JLabel failLabel2 = new JLabel("확인 후 다시 입력 부탁드립니다.");
+	
 	private JButton closeBtn = new JButton("닫기");
 	
-	private DoctorSignUpFrame doctorSignUp = null;
 	private PatientSignUpFrame patientSignUp = null;
+	private DoctorSignUpFrame doctorSignUp = null;
+	
+	private DBdao dbdao = null;
 	
 	private boolean check = false;
 	
-	private DBdao dbdao = null;
 	public SignUpFailFrame(DBdao db, boolean frame) {
 		this.dbdao = db;
+		check = frame;
+		
 		// AbsoluteLayout
 		mainPanel.setLayout(null);
 		
-		fail1Label.setFont(new Font(getName(), Font.BOLD, 14));
-		fail1Label.setBounds(55, 25, 220, 50);
-		mainPanel.add(fail1Label);
-		fail2Label.setFont(new Font(getName(), Font.BOLD, 14));
-		fail2Label.setBounds(62, 45, 205, 50);
-		mainPanel.add(fail2Label);
+		failLabel1.setFont(new Font(getName(), Font.BOLD, 14));
+		failLabel1.setBounds(55, 25, 220, 50);
+		mainPanel.add(failLabel1);
+		failLabel2.setFont(new Font(getName(), Font.BOLD, 14));
+		failLabel2.setBounds(62, 45, 205, 50);
+		mainPanel.add(failLabel2);
 		
 		closeBtn.setBounds(135, 100, 60, 30);
-		mainPanel.add(closeBtn);
-		
-		check = frame;
 		closeBtn.addActionListener(this);
+		mainPanel.add(closeBtn);
 		
 		this.add(mainPanel);
 		
@@ -54,7 +57,7 @@ public class SignUpFailFrame extends JFrame implements ActionListener {
 	// 이벤트 발생 메서드
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == closeBtn) {
+		if (e.getSource() == closeBtn) {		// 닫기 버튼 클릭
 			if (check) {
 				System.out.println("관계자 등록 실패 팝업 → 관계자 등록 화면");
 				if (doctorSignUp == null) {

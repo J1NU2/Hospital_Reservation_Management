@@ -30,7 +30,7 @@ public class HospitalDAO implements DBdao {
 		}
 		return hospitalDAO;
 	}
-	// 드라이버 로드
+	// DB 드라이버 로드
 	private void init() {
 		try {
 			Class.forName(dbDriver);
@@ -40,7 +40,7 @@ public class HospitalDAO implements DBdao {
 			System.out.println("☆ DB 드라이버 로드 실패");
 		}
 	}
-	// 커넥션 로드
+	// DB 커넥션 로드
 	private boolean conn() {
 		try {
 			conn = DriverManager.getConnection(dbURL, dbName, dbPwd);
@@ -52,7 +52,7 @@ public class HospitalDAO implements DBdao {
 		}
 		return false;
 	}
-	// 일반회원 등록
+	// 일반회원(환자) 등록
 	@Override
 	public void patientSignUp(PatientDTO patientdto) {
 		if (conn()) {
@@ -71,7 +71,6 @@ public class HospitalDAO implements DBdao {
 				pstmt.setString(7, patientdto.getPhone());
 				
 				int resultInt = pstmt.executeUpdate();
-				
 				if (resultInt > 0) {
 					conn.commit();
 				} else {
@@ -95,7 +94,7 @@ public class HospitalDAO implements DBdao {
 			System.out.println("★ 데이터베이스 연결 실패");
 		}
 	}
-	// 일반회원 로그인 시 DB에 있는지 조회
+	// 일반회원(환자) 로그인 시 해당 정보가 DB에 있는지 조회
 	@Override
 	public PatientDTO patientLogin(String findId, String findPwd) {
 		if (conn()) {
@@ -138,7 +137,7 @@ public class HospitalDAO implements DBdao {
 		}
 		return null;
 	}
-	// 회원가입 시 ID가 DB에 있는지 조회
+	// 회원가입 시 ID가 DB에 있는지 조회 (중복체크)
 	@Override
 	public boolean patientIdCheck(String findId) {
 		if (conn()) {
@@ -171,7 +170,7 @@ public class HospitalDAO implements DBdao {
 		}
 		return false;
 	}
-	// 회원가입 시 주민번호가 DB에 있는지 조회
+	// 회원가입 시 주민번호가 DB에 있는지 조회 (중복체크)
 	@Override
 	public boolean patientIdenCheck(String findIden) {
 		if (conn()) {
@@ -219,7 +218,6 @@ public class HospitalDAO implements DBdao {
 				pstmt.setString(4, doctordto.getMajor());
 				
 				int resultInt = pstmt.executeUpdate();
-				
 				if (resultInt > 0) {
 					conn.commit();
 				} else {
@@ -243,7 +241,7 @@ public class HospitalDAO implements DBdao {
 			System.out.println("★ 데이터베이스 연결 실패");
 		}
 	}
-	// 관계자(의사) 로그인 시 DB에 있는지 조회
+	// 관계자(의사) 로그인 시 해당 정보가 DB에 있는지 조회
 	@Override
 	public DoctorDTO doctorLogin(String findNum, String findPwd) {
 		if (conn()) {
@@ -282,7 +280,7 @@ public class HospitalDAO implements DBdao {
 		}
 		return null;
 	}
-	// 의사 등록 시 의사번호가 DB에 있는지 조회
+	// 관계자(의사)등록 시 의사번호가 DB에 있는지 조회 (중복체크)
 	@Override
 	public boolean doctorNumCheck(String findNum) {
 		if (conn()) {
@@ -316,7 +314,7 @@ public class HospitalDAO implements DBdao {
 		return false;
 	}
 	
-	// 예약 시 의사 DB 정보 전체 조회
+	// 예약 시 모든 의사 정보 전체 조회
 	@Override
 	public ArrayList<DoctorDTO> doctorAll() {
 		ArrayList<DoctorDTO> dList = new ArrayList<DoctorDTO>();
@@ -355,7 +353,7 @@ public class HospitalDAO implements DBdao {
 		}
 		return dList;
 	}
-	// 일반회원 한명의 정보 리턴
+	// 일반회원(환자) 한명의 정보 조회
 	@Override
 	public PatientDTO patientOne(String findIden) {
 		if (conn()) {
@@ -397,7 +395,7 @@ public class HospitalDAO implements DBdao {
 		}
 		return null;
 	}
-	// 의사 한명의 정보 리턴
+	// 관계자(의사) 한명의 정보 조회
 	@Override
 	public DoctorDTO doctorOne(String findNum) {
 		if (conn()) {
@@ -450,7 +448,6 @@ public class HospitalDAO implements DBdao {
 				pstmt.setString(4, reservdto.getDoctorNum());
 				
 				int resultInt = pstmt.executeUpdate();
-				
 				if (resultInt > 0) {
 					conn.commit();
 				} else {
@@ -474,7 +471,7 @@ public class HospitalDAO implements DBdao {
 			System.out.println("★ 데이터베이스 연결 실패");
 		}
 	}
-	// 일반회원이 현재 예약한 내역 조회
+	// 일반회원(환자)이 현재 예약한 예약 내역 조회
 	@Override
 	public ReservationDTO reservationCurrent(String findIden) {
 		if (conn()) {
@@ -515,9 +512,9 @@ public class HospitalDAO implements DBdao {
 		}
 		return null;
 	}
-	// 선택한 의사에게 예약한 날짜/시간이 겹치는 내역
+	// 선택한 의사에게 예약하려는 날짜/시간이 겹치는지 조회
 	@Override
-	public ReservationDTO reservationCurrentDoctor(String findDate, String findTime, String findDoc) {
+	public ReservationDTO reservationCurrentDoctor(String findDate, String findTime, String findNum) {
 		if (conn()) {
 			try {
 				System.out.println("★ 데이터베이스 연결 성공");
@@ -526,7 +523,7 @@ public class HospitalDAO implements DBdao {
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, findDate);
 				pstmt.setString(2, findTime);
-				pstmt.setString(3, findDoc);
+				pstmt.setString(3, findNum);
 				
 				ResultSet rs = pstmt.executeQuery();
 				while (rs.next()) {
@@ -559,7 +556,7 @@ public class HospitalDAO implements DBdao {
 		}
 		return null;
 	}
-	// 현재 예약 취소
+	// 일반회원(환자)이 현재 예약한 예약 취소
 	@Override
 	public void reservationDel(String findIden) {
 		if (conn()) {
@@ -571,7 +568,6 @@ public class HospitalDAO implements DBdao {
 				pstmt.setString(1, findIden);
 				
 				int resultInt = pstmt.executeUpdate();
-				
 				if (resultInt > 0) {
 					conn.commit();
 				} else {
@@ -595,7 +591,7 @@ public class HospitalDAO implements DBdao {
 			System.out.println("★ 데이터베이스 연결 실패");
 		}
 	}
-	// 진료여부, 증상메모 변경
+	// 예약 내역의 진료여부, 증상메모 변경
 	@Override
 	public void reservationMod(ReservationDTO reservdto, String modMemo) {
 		if (conn()) {
@@ -610,7 +606,6 @@ public class HospitalDAO implements DBdao {
 				pstmt.setString(4, reservdto.getDoctorNum());
 				
 				int resultInt = pstmt.executeUpdate();
-				
 				if (resultInt > 0) {
 					conn.commit();
 				} else {
@@ -634,7 +629,7 @@ public class HospitalDAO implements DBdao {
 			System.out.println("★ 데이터베이스 연결 실패");
 		}
 	}
-	// 취소사유 변경
+	// 예약 내역의 취소사유 변경
 	@Override
 	public void reservationCancel(ReservationDTO reservdto, String modReason) {
 		if (conn()) {
@@ -649,7 +644,6 @@ public class HospitalDAO implements DBdao {
 				pstmt.setString(4, reservdto.getDoctorNum());
 				
 				int resultInt = pstmt.executeUpdate();
-				
 				if (resultInt > 0) {
 					conn.commit();
 				} else {
@@ -673,7 +667,7 @@ public class HospitalDAO implements DBdao {
 			System.out.println("★ 데이터베이스 연결 실패");
 		}
 	}
-	// 로그인한 환자가 예약한 모든 내역 조회
+	// 로그인한 일반회원(환자)이 예약한 모든 내역 조회
 	@Override
 	public ArrayList<ReservationDTO> reservationPatientAll(String findiden) {
 		ArrayList<ReservationDTO> rList = new ArrayList<ReservationDTO>();
@@ -716,14 +710,15 @@ public class HospitalDAO implements DBdao {
 		}
 		return null;
 	}
-	// 로그인한 의사에게 예약한 모든 내역 조회
+	// 로그인한 관계자(의사)에게 예약한 모든 내역 조회
 	@Override
 	public ArrayList<ReservationDTO> reservationDoctorAll(String findNum) {
 		ArrayList<ReservationDTO> rList = new ArrayList<ReservationDTO>();
 		if (conn()) {
 			try {
 				System.out.println("★ 데이터베이스 연결 성공");
-				String sql = "SELECT * FROM reservation WHERE doctor_num=? AND medical_check='N'";
+				String sql = "SELECT * FROM reservation "
+						+ "WHERE doctor_num=? AND medical_check='N' AND cancel_reason IS NULL";
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, findNum);
 				
@@ -759,5 +754,4 @@ public class HospitalDAO implements DBdao {
 		}
 		return null;
 	}
-
 }

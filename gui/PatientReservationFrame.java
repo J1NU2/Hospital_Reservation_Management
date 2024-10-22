@@ -102,9 +102,6 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		this.patientdto = patientdto;
 		this.dList = dbdao.doctorAll();
 		this.rList = dbdao.reservationPatientAll(patientdto.getIdentityNum());
-		for (int i=0; i<rList.size(); i++) {
-			System.out.println(rList.get(i).toString());
-		}
 		
 		// AbsoluteLayout
 		mainPanel.setLayout(null);
@@ -128,6 +125,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		mainPanel.add(idenText);
 		
 		logoutBtn.setBounds(530, 18, 85, 30);
+		logoutBtn.addActionListener(this);
 		mainPanel.add(logoutBtn);
 		
 		// 예약하기
@@ -137,6 +135,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		reservLabel.setBounds(15, -5, 50, 50);
 		reservPanel.add(reservLabel);
 		
+		// 의사이름
 		doctorNameLabel.setBounds(25, 35, 50, 50);
 		reservPanel.add(doctorNameLabel);
 		doctorNameChoice.setBounds(85, 48, 100, 25);
@@ -146,7 +145,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		}
 		doctorNameChoice.addItemListener(this);
 		reservPanel.add(doctorNameChoice);
-		
+		// 의사번호
 		doctorNumLabel.setBounds(25, 75, 50, 50);
 		reservPanel.add(doctorNumLabel);
 		doctorNumText.setBounds(85, 88, 100, 25);
@@ -154,6 +153,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		doctorNumText.setForeground(Color.BLACK);
 		doctorNumText.setEditable(false);
 		reservPanel.add(doctorNumText);
+		// 전공
 		doctorMajorLabel.setBounds(25, 115, 25, 50);
 		reservPanel.add(doctorMajorLabel);
 		doctorMajorText.setBounds(85, 128, 100, 25);
@@ -161,7 +161,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		doctorMajorText.setForeground(Color.BLACK);
 		doctorMajorText.setEditable(false);
 		reservPanel.add(doctorMajorText);
-		
+		// 예약날짜(년)
 		reservDateLabel.setBounds(200, 55, 50, 50);
 		reservPanel.add(reservDateLabel);
 		yearChoice.setBounds(260, 68, 80, 25);
@@ -171,6 +171,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		}
 		yearChoice.addItemListener(this);
 		reservPanel.add(yearChoice);
+		// 예약날짜(월)
 		monthChoice.setBounds(350, 68, 80, 25);
 		monthChoice.addItem("---- 월 ----");
 		for (int i=1; i<=12; i++) {
@@ -182,12 +183,13 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		}
 		monthChoice.addItemListener(this);
 		reservPanel.add(monthChoice);
+		// 예약날짜(일)
 		dayChoice.setBounds(440, 68, 80, 25);
 		dayChoice.addItem("---- 일 ----");
 		dayChoice.addItemListener(this);
 		reservPanel.add(dayChoice);
-		
-		// 오전 9시 ~ 오후 5시 (09시~17시)
+		// 평균 병원 진료시간 오전 9시 ~ 오후 5시 (09시~17시)
+		// 예약시간(시)
 		reservTimeLabel.setBounds(200, 95, 50, 50);
 		reservPanel.add(reservTimeLabel);
 		hourChoice.setBounds(260, 108, 80, 25);
@@ -201,6 +203,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		}
 		hourChoice.addItemListener(this);
 		reservPanel.add(hourChoice);
+		// 예약시간(분)
 		minuteChoice.setBounds(350, 108, 80, 25);
 		minuteChoice.addItem("---- 분 ----");
 		for (int i=0; i<60; i+=30) {
@@ -212,20 +215,19 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		}
 		minuteChoice.addItemListener(this);
 		reservPanel.add(minuteChoice);
-		
 		reservPanel.add(reservCheckLabel);
 		
 		reservBtn.setBounds(440, 150, 85, 30);
+		reservBtn.addActionListener(this);
 		reservPanel.add(reservBtn);
-		
 		mainPanel.add(reservPanel);
 		
+		// 현재 예약 내역
 		reservListPanel.setLayout(null);
 		reservListPanel.setBounds(60, 285, 545, 200);
 		reservListPanel.setBackground(Color.LIGHT_GRAY);
 		reservListLabel.setBounds(15, -5, 80, 50);
 		reservListPanel.add(reservListLabel);
-		
 		try {
 			ReservationDTO reservCurrent = dbdao.reservationCurrent(patientdto.getIdentityNum());
 			DoctorDTO reservDoctor = dbdao.doctorOne(reservCurrent.getDoctorNum());
@@ -238,18 +240,16 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 			rowData[5] = reservCurrent.getTime();
 			modelOne.addRow(rowData);
 		} catch (Exception e) {}
-		
 		reservListColName.setBounds(25, 50, 500, 30);
 		reservListPanel.add(reservListColName);
 		reservListOne.setBounds(25, 80, 500, 50);
 		reservListOne.setRowHeight(50);
 		reservListPanel.add(reservListOne);
-		
 		reservListPanel.add(reservCancelLabel);
 		
 		cancelBtn.setBounds(440, 150, 85, 30);
+		cancelBtn.addActionListener(this);
 		reservListPanel.add(cancelBtn);
-		
 		mainPanel.add(reservListPanel);
 		
 		// 전체 예약 내역
@@ -258,7 +258,6 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		reservListAllPanel.setBackground(Color.LIGHT_GRAY);
 		reservListAllLabel.setBounds(15, -5, 80, 50);
 		reservListAllPanel.add(reservListAllLabel);
-		
 		try {
 			for (int i=0; i<rList.size(); i++) {
 				DoctorDTO reservDoctor = dbdao.doctorOne(rList.get(i).getDoctorNum());
@@ -274,19 +273,13 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 				modelAll.addRow(rowData);
 			}
 		} catch (Exception e) {}
-		
 		reservListAllScrollPane.setBounds(25, 40, 500, 170);
 		reservListAllPanel.add(reservListAllScrollPane);
-		
 		mainPanel.add(reservListAllPanel);
-		
-		logoutBtn.addActionListener(this);
-		reservBtn.addActionListener(this);
-		cancelBtn.addActionListener(this);
 		
 		this.add(mainPanel);
 		
-		this.setTitle("병원 예약 관리 시스템 : 관계자 등록");
+		this.setTitle("병원 예약 관리 시스템 : 예약하기");
 		this.setSize(680, 800);				// 화면 크기 680x800
 		this.setLocationRelativeTo(null);	// 화면 중앙 배치
 		this.setVisible(true);
@@ -304,7 +297,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 		ReservationDTO reservDoctorCurrentCheck = dbdao.reservationCurrentDoctor(
 				reservDate, reservTime, doctorNumText.getText());
 		
-		if (e.getSource() == logoutBtn) {
+		if (e.getSource() == logoutBtn) {			// 로그아웃 버튼 클릭
 			System.out.println("로그아웃");
 			System.out.println("예약하기 화면 → 일반회원 로그인 화면");
 			if (patientLogin == null) {
@@ -312,7 +305,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 			}
 			this.setVisible(false);
 			patientLogin.setVisible(true);
-		} else if (e.getSource() == reservBtn) {
+		} else if (e.getSource() == reservBtn) {	// 예약하기 버튼 클릭
 			if (reservationBlankCheck()) {
 				if (reservCurrentCheck == null && reservDoctorCurrentCheck == null) {
 					System.out.println("예약하기 성공");
@@ -321,7 +314,6 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 					reservdto.setDoctorNum(doctorNumText.getText());
 					reservdto.setDate(reservDate);
 					reservdto.setTime(reservTime);
-					
 					dbdao.reservationAdd(reservdto);
 					
 					reservCheckLabel.setText("");
@@ -344,9 +336,8 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 				reservCheckLabel.setText("빈칸이 있는지 확인해주세요.");
 				reservCheckLabel.setForeground(Color.RED);
 			}
-		} else if (e.getSource() == cancelBtn) {
+		} else if (e.getSource() == cancelBtn) {	// 취소하기 버튼 클릭
 			System.out.println("현재 예약 취소");
-			// 코드 작성
 			if (!(reservCurrentCheck == null)) {
 				System.out.println("예약취소 성공");
 				
@@ -364,7 +355,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 	}
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		if (e.getSource() == doctorNameChoice) {
+		if (e.getSource() == doctorNameChoice) {		// 의사이름 선택 시
 			if (!(e.toString().contains("-"))) {
 				int doctorNameIndex = doctorNameChoice.getSelectedItem().indexOf("(");
 				int doctorNumIndex = doctorNameChoice.getSelectedItem().indexOf(")");
@@ -381,7 +372,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 				doctorNumText.setText("");
 				doctorMajorText.setText("");
 			}
-		} else if (e.getSource() == yearChoice) {
+		} else if (e.getSource() == yearChoice) {		// 예약날짜(년) 선택 시
 			if (!(e.toString().contains("-"))) {
 				int yearIndex = yearChoice.getSelectedItem().indexOf("년");
 				year = yearChoice.getSelectedItem().substring(0, yearIndex);
@@ -394,7 +385,7 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 			} else {
 				year = null;
 			}
-		} else if (e.getSource() == monthChoice) {
+		} else if (e.getSource() == monthChoice) {		// 예약날짜(월) 선택 시
 			if (!(e.toString().contains("-"))) {
 				int monthIndex = monthChoice.getSelectedItem().indexOf("월");
 				month = monthChoice.getSelectedItem().substring(0, monthIndex);
@@ -414,21 +405,21 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 			} else {
 				month = null;
 			}
-		} else if (e.getSource() == dayChoice) {
+		} else if (e.getSource() == dayChoice) {		// 예약날짜(일) 선택 시
 			if (!(e.toString().contains("-"))) {
 				int dayIndex = dayChoice.getSelectedItem().indexOf("일");
 				day = dayChoice.getSelectedItem().substring(0, dayIndex);
 			} else {
 				day = null;
 			}
-		} else if (e.getSource() == hourChoice) {
+		} else if (e.getSource() == hourChoice) {		// 예약시간(시) 선택 시
 			if (!(e.toString().contains("-"))) {
 				int hourIndex = hourChoice.getSelectedItem().indexOf("시");
 				hour = hourChoice.getSelectedItem().substring(0, hourIndex);
 			} else {
 				hour = null;
 			}
-		} else if (e.getSource() == minuteChoice) {
+		} else if (e.getSource() == minuteChoice) {		// 예약시간(분) 선택 시
 			if (!(e.toString().contains("-"))) {
 				int minuteIndex = minuteChoice.getSelectedItem().indexOf("분");
 				minute = minuteChoice.getSelectedItem().substring(0, minuteIndex);
@@ -437,8 +428,9 @@ public class PatientReservationFrame extends JFrame implements ActionListener, I
 			}
 		}
 	}
+	
 	// 예약 시 누락된 정보가 없으면 true, 하나라도 있으면 false
-	public boolean reservationBlankCheck() {
+	private boolean reservationBlankCheck() {
 		if (doctorName == null || doctorNumText.getText().isEmpty() || doctorMajorText.getText().isEmpty() || 
 				year == null || month == null || day == null || hour == null || minute == null) {
 			return false;

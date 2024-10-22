@@ -13,18 +13,22 @@ import dao.DBdao;
 
 public class DoctorCheckFrame extends JFrame implements ActionListener {
 	private JPanel mainPanel = new JPanel();
+	
 	private JLabel checkLabel = new JLabel("인증번호");
+	
 	private JTextField checkInput = new JTextField();
+	
 	private JButton checkBtn = new JButton("확인");
 	private JButton closeBtn = new JButton("닫기");
 	
+	private MainFrame mainF = null;
 	private DoctorLoginFrame doctorLogin = null;
 	private DoctorCheckFailFrame doctorCheckFail = null;
-	private MainFrame mainF = null;
-	
-	private String checkNum = "486";
 	
 	private DBdao dbdao = null;
+	
+	private String checkNum = "486";			// 관계자 인증 번호
+	
 	public DoctorCheckFrame(DBdao db) {
 		this.dbdao = db;
 		
@@ -38,12 +42,11 @@ public class DoctorCheckFrame extends JFrame implements ActionListener {
 		mainPanel.add(checkInput);
 		
 		checkBtn.setBounds(90, 90, 65, 30);
+		checkBtn.addActionListener(this);
 		mainPanel.add(checkBtn);
 		closeBtn.setBounds(180, 90, 65, 30);
-		mainPanel.add(closeBtn);
-		
-		checkBtn.addActionListener(this);
 		closeBtn.addActionListener(this);
+		mainPanel.add(closeBtn);
 		
 		this.add(mainPanel);
 		
@@ -58,7 +61,7 @@ public class DoctorCheckFrame extends JFrame implements ActionListener {
 	// 이벤트 발생 메서드
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == checkBtn) {
+		if (e.getSource() == checkBtn) {			// 확인 버튼 클릭
 			System.out.println("인증번호 확인 ↓");
 			if (checkInput.getText().equals(checkNum)) {
 				System.out.println("인증번호 맞음");
@@ -76,7 +79,7 @@ public class DoctorCheckFrame extends JFrame implements ActionListener {
 				this.setVisible(false);
 				doctorCheckFail.setVisible(true);
 			}
-		} else if (e.getSource() == closeBtn) {
+		} else if (e.getSource() == closeBtn) {		// 닫기 버튼 클릭
 			System.out.println("팝업창 닫기 → 메인 화면");
 			if (mainF == null) {
 				mainF = new MainFrame(dbdao);

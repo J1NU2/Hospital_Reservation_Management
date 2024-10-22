@@ -23,27 +23,31 @@ import dto.ReservationDTO;
 
 public class TextInsertFrame extends JFrame implements ActionListener {
 	private JPanel mainPanel = new JPanel();
+	
 	private JLabel insertLabel = new JLabel();
 	private JLabel checkLabel = new JLabel();
+	
 	private JTextArea textArea = new JTextArea("여기에 입력해주세요.");
 	private JScrollPane textScroll = new JScrollPane(textArea, 
 			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	
 	private JButton checkBtn = new JButton("확인");
 	private JButton closeBtn = new JButton("닫기");
 	
 	private DoctorMedicalListFrame doctorMedicalList = null;
 	
-	private int number = 0;
-	
 	private DBdao dbdao = null;
 	private DoctorDTO doctordto = null;
 	private ReservationDTO reservdto = null;
+	
+	private int number = 0;
 	
 	public TextInsertFrame(DBdao db, DoctorDTO doctordto, ReservationDTO reservdto, int num) {
 		this.dbdao = db;
 		this.doctordto = doctordto;
 		this.reservdto = reservdto;
+		number = num;
 		
 		// AbsoluteLayout
 		mainPanel.setLayout(null);
@@ -80,14 +84,12 @@ public class TextInsertFrame extends JFrame implements ActionListener {
 		mainPanel.add(textScroll);
 		
 		checkBtn.setBounds(90, 205, 65, 30);
+		checkBtn.addActionListener(this);
 		mainPanel.add(checkBtn);
 		closeBtn.setBounds(180, 205, 65, 30);
+		closeBtn.addActionListener(this);
 		mainPanel.add(closeBtn);
 		
-		checkBtn.addActionListener(this);
-		closeBtn.addActionListener(this);
-		
-		number = num;
 		this.add(mainPanel);
 		
 		this.setTitle("증상메모");
@@ -103,14 +105,14 @@ public class TextInsertFrame extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (number == 1) {
 			// 증상메모 변경
-			if (e.getSource() == checkBtn) {
+			if (e.getSource() == checkBtn) {			// 확인 버튼 클릭
 				System.out.println("증상메모 변경");
 				System.out.println("증상메모 변경 팝업 → 예약 목록 화면");
-				// 코드 작성
 				if (!(textArea.getText().equals("") || textArea.getText().equals("여기에 입력해주세요."))) {
 					if (doctorMedicalList == null) {
 						doctorMedicalList = new DoctorMedicalListFrame(dbdao, doctordto);
 					}
+					
 					dbdao.reservationMod(reservdto, textArea.getText());
 					
 					checkLabel.setText("");
@@ -120,7 +122,7 @@ public class TextInsertFrame extends JFrame implements ActionListener {
 					checkLabel.setText("증상을 입력해주세요.");
 					checkLabel.setForeground(Color.RED);
 				}
-			} else if (e.getSource() == closeBtn) {
+			} else if (e.getSource() == closeBtn) {		// 닫기 버튼 클릭
 				System.out.println("증상메모 변경 팝업 → 예약 목록 화면");
 				if (doctorMedicalList == null) {
 					doctorMedicalList = new DoctorMedicalListFrame(dbdao, doctordto);
@@ -131,14 +133,14 @@ public class TextInsertFrame extends JFrame implements ActionListener {
 			}
 		} else if (number == 2) {
 			// 취소사유 입력
-			if (e.getSource() == checkBtn) {
+			if (e.getSource() == checkBtn) {			// 확인 버튼 클릭
 				System.out.println("취소사유 등록");
 				System.out.println("취소사유 등록 팝업 → 예약 목록 화면");
-				// 코드 작성
 				if (!(textArea.getText().equals("") || textArea.getText().equals("여기에 입력해주세요."))) {
 					if (doctorMedicalList == null) {
 						doctorMedicalList = new DoctorMedicalListFrame(dbdao, doctordto);
 					}
+					
 					dbdao.reservationCancel(reservdto, textArea.getText());
 					
 					checkLabel.setText("");
@@ -148,7 +150,7 @@ public class TextInsertFrame extends JFrame implements ActionListener {
 					checkLabel.setText("사유를 입력해주세요.");
 					checkLabel.setForeground(Color.RED);
 				}
-			} else if (e.getSource() == closeBtn) {
+			} else if (e.getSource() == closeBtn) {		// 닫기 버튼 클릭
 				System.out.println("취소사유 등록 팝업 → 예약 목록 화면");
 				if (doctorMedicalList == null) {
 					doctorMedicalList = new DoctorMedicalListFrame(dbdao, doctordto);

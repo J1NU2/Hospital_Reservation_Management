@@ -13,14 +13,18 @@ import dao.DBdao;
 
 public class DoctorCheckFailFrame extends JFrame implements ActionListener {
 	private JPanel mainPanel = new JPanel();
+	
 	private JLabel failLabel = new JLabel("관계자 인증 확인에 실패하였습니다.");
+	
 	private JButton closeBtn = new JButton("닫기");
 	
 	private DoctorCheckFrame doctorCheck = null;
 	
 	private DBdao dbdao = null;
+	
 	public DoctorCheckFailFrame(DBdao db) {
 		this.dbdao = db;
+		
 		// AbsoluteLayout
 		mainPanel.setLayout(null);
 		
@@ -29,13 +33,12 @@ public class DoctorCheckFailFrame extends JFrame implements ActionListener {
 		mainPanel.add(failLabel);
 		
 		closeBtn.setBounds(135, 90, 60, 30);
-		mainPanel.add(closeBtn);
-		
 		closeBtn.addActionListener(this);
+		mainPanel.add(closeBtn);
 		
 		this.add(mainPanel);
 		
-		this.setTitle("인증 실패");
+		this.setTitle("관계자 인증 실패");
 		this.setSize(350, 200);				// 화면 크기 350x200
 		this.setLocationRelativeTo(null);	// 화면 중앙 배치
 		this.setVisible(true);
@@ -46,7 +49,7 @@ public class DoctorCheckFailFrame extends JFrame implements ActionListener {
 	// 이벤트 발생 메서드
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == closeBtn) {
+		if (e.getSource() == closeBtn) {	// 닫기 버튼 클릭
 			System.out.println("팝업창 닫기");
 			System.out.println("인증 실패 팝업 → 관계자 인증 팝업");
 			if (doctorCheck == null) {

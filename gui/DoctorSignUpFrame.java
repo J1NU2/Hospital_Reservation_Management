@@ -21,35 +21,39 @@ import dto.DoctorDTO;
 
 public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemListener {
 	private JPanel mainPanel = new JPanel();
+	
 	private JLabel titleLabel = new JLabel("관계자 등록");
 	private JLabel numLabel = new JLabel("의사번호");
-	private JLabel numCheckLabel = new JLabel();		// 의사번호 중복 확인
-	private JLabel pwd1Label = new JLabel("비밀번호");
-	private JLabel pwd2Label = new JLabel("비밀번호 확인");
-	private JLabel pwdCheckLabel = new JLabel();		// 비밀번호 중복 확인
+	private JLabel numCheckLabel = new JLabel();
+	private JLabel pwdLabel1 = new JLabel("비밀번호");
+	private JLabel pwdLabel2 = new JLabel("비밀번호 확인");
+	private JLabel pwdCheckLabel = new JLabel();
 	private JLabel nameLabel = new JLabel("이름");
 	private JLabel majorLabel = new JLabel("전공");
+	
 	private JTextField numInput = new JTextField();
-	private JTextField pwd1Input = new JTextField();
-	private JTextField pwd2Input = new JTextField();
+	private JTextField pwdInput1 = new JTextField();
+	private JTextField pwdInput2 = new JTextField();
 	private JTextField nameInput = new JTextField();
+	
 	private Choice majorChoice = new Choice();
 	private String[] majorList = {"내과", "일반외과", "정형외과", "소아과", "안과", 
 								"이비인후과", "피부과", "비뇨기과", "정신과", "성형외과"};
-	private JButton numCheckBtn = new JButton("검사");	// 의사번호 중복
+	
+	private JButton numCheckBtn = new JButton("검사");
 	private JButton signupBtn = new JButton("등록");
 	private JButton backBtn = new JButton("뒤로가기");
 	
-	private SignUpFailFrame signupFail = null;
-	private SignUpSuccessFrame signupSuccess = null;
 	private DoctorLoginFrame doctorLogin = null;
+	private SignUpSuccessFrame signupSuccess = null;
+	private SignUpFailFrame signupFail = null;
+	
+	private DBdao dbdao = null;
 	
 	private boolean numCheck = false;
 	private boolean pwdCheck = false;
-	
 	private String major = null;
 	
-	private DBdao dbdao = null;
 	public DoctorSignUpFrame(DBdao db) {
 		this.dbdao = db;
 		
@@ -64,10 +68,10 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 		mainPanel.add(numLabel);
 		numCheckLabel.setBounds(204, 82, 145, 50);
 		mainPanel.add(numCheckLabel);
-		pwd1Label.setBounds(125, 105, 50, 50);
-		mainPanel.add(pwd1Label);
-		pwd2Label.setBounds(110, 150, 75, 50);
-		mainPanel.add(pwd2Label);
+		pwdLabel1.setBounds(125, 105, 50, 50);
+		mainPanel.add(pwdLabel1);
+		pwdLabel2.setBounds(110, 150, 75, 50);
+		mainPanel.add(pwdLabel2);
 		pwdCheckLabel.setBounds(204, 172, 165, 50);
 		mainPanel.add(pwdCheckLabel);
 		nameLabel.setBounds(138, 195, 25, 50);
@@ -90,8 +94,8 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 			}
 		});
 		mainPanel.add(numInput);
-		pwd1Input.setBounds(200, 118, 170, 25);
-		pwd1Input.addKeyListener(new KeyAdapter() {
+		pwdInput1.setBounds(200, 118, 170, 25);
+		pwdInput1.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				JTextField leng = (JTextField) e.getSource();
 				char text = e.getKeyChar();
@@ -106,8 +110,8 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 				}
 			}
 			public void keyReleased(KeyEvent e) {
-				String pwd1 = pwd1Input.getText();
-				String pwd2 = pwd2Input.getText();
+				String pwd1 = pwdInput1.getText();
+				String pwd2 = pwdInput2.getText();
 				if (pwd1.equals(pwd2) && !(pwd1.isEmpty()) && !(pwd2.isEmpty())) {
 					System.out.println("패스워드 일치");
 					pwdCheckLabel.setText("비밀번호가 일치합니다.");
@@ -125,9 +129,9 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 				}
 			}
 		});
-		mainPanel.add(pwd1Input);
-		pwd2Input.setBounds(200, 163, 170, 25);
-		pwd2Input.addKeyListener(new KeyAdapter() {
+		mainPanel.add(pwdInput1);
+		pwdInput2.setBounds(200, 163, 170, 25);
+		pwdInput2.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				JTextField leng = (JTextField) e.getSource();
 				char text = e.getKeyChar();
@@ -142,8 +146,8 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 				}
 			}
 			public void keyReleased(KeyEvent e) {
-				String pwd1 = pwd1Input.getText();
-				String pwd2 = pwd2Input.getText();
+				String pwd1 = pwdInput1.getText();
+				String pwd2 = pwdInput2.getText();
 				if (pwd1.equals(pwd2) && !(pwd1.isEmpty()) && !(pwd2.isEmpty())) {
 					System.out.println("패스워드 일치");
 					pwdCheckLabel.setText("비밀번호가 일치합니다.");
@@ -161,7 +165,7 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 				}
 			}
 		});
-		mainPanel.add(pwd2Input);
+		mainPanel.add(pwdInput2);
 		nameInput.setBounds(200, 208, 170, 25);
 		nameInput.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
@@ -188,15 +192,14 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 		mainPanel.add(majorChoice);
 		
 		numCheckBtn.setBounds(320, 70, 65, 30);
+		numCheckBtn.addActionListener(this);
 		mainPanel.add(numCheckBtn);
 		signupBtn.setBounds(155, 300, 60, 30);
+		signupBtn.addActionListener(this);
 		mainPanel.add(signupBtn);
 		backBtn.setBounds(245, 300, 85, 30);
-		mainPanel.add(backBtn);
-		
-		numCheckBtn.addActionListener(this);
-		signupBtn.addActionListener(this);
 		backBtn.addActionListener(this);
+		mainPanel.add(backBtn);
 		
 		this.add(mainPanel);
 		
@@ -211,7 +214,7 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 	// 이벤트 발생 메서드
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == signupBtn) {
+		if (e.getSource() == signupBtn) {			// 등록 버튼 클릭
 			// 관계자 등록
 			if (signupBlankCheck()) {
 				if (!numCheck && pwdCheck) {
@@ -224,7 +227,7 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 					
 					DoctorDTO doctordto = new DoctorDTO();
 					doctordto.setNum(numInput.getText());
-					doctordto.setPwd(pwd2Input.getText());
+					doctordto.setPwd(pwdInput2.getText());
 					doctordto.setName(nameInput.getText());
 					doctordto.setMajor(major);
 					dbdao.doctorSignUp(doctordto);
@@ -251,14 +254,14 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 				this.setVisible(false);
 				signupFail.setVisible(true);
 			}
-		} else if (e.getSource() == backBtn) {
+		} else if (e.getSource() == backBtn) {		// 뒤로가기 버튼 클릭
 			System.out.println("관계자 등록 화면 → 관계자 로그인 화면");
 			if (doctorLogin == null) {
 				doctorLogin = new DoctorLoginFrame(dbdao);
 			}
 			this.setVisible(false);
 			doctorLogin.setVisible(true);
-		} else if (e.getSource() == numCheckBtn) {
+		} else if (e.getSource() == numCheckBtn) {	// 의사번호 중복 검사 버튼 클릭
 			System.out.println("의사번호 중복 검사");
 			if (numInput.getText().isEmpty()) {
 				numCheck = true;
@@ -279,7 +282,7 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 	}
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		if (e.getSource() == majorChoice) {
+		if (e.getSource() == majorChoice) {		// 전공 선택 시
 			if (!(e.toString().contains("-"))) {
 				major = majorChoice.getSelectedItem();
 				System.out.println(major);
@@ -289,10 +292,11 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 			}
 		}
 	}
+	
 	// 의사 등록 시 누락된 정보가 없으면 true, 있으면 false
-	public boolean signupBlankCheck() {
-		if (numInput.getText().isEmpty() || pwd1Input.getText().isEmpty() || 
-				pwd2Input.getText().isEmpty() || nameInput.getText().isEmpty() || major == null) {
+	private boolean signupBlankCheck() {
+		if (numInput.getText().isEmpty() || pwdInput1.getText().isEmpty() || 
+				pwdInput2.getText().isEmpty() || nameInput.getText().isEmpty() || major == null) {
 			return false;
 		}
 		return true;

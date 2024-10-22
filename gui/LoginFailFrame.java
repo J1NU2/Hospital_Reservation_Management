@@ -13,17 +13,22 @@ import dao.DBdao;
 
 public class LoginFailFrame extends JFrame implements ActionListener {
 	private JPanel mainPanel = new JPanel();
+	
 	private JLabel failLabel = new JLabel("아이디 또는 비밀번호가 틀렸습니다.");
+	
 	private JButton closeBtn = new JButton("닫기");
 	
-	private DoctorLoginFrame doctorLogin = null;
 	private PatientLoginFrame patientLogin = null;
+	private DoctorLoginFrame doctorLogin = null;
+	
+	private DBdao dbdao = null;
 	
 	private boolean check = false;
 	
-	private DBdao dbdao = null;
 	public LoginFailFrame(DBdao db, boolean frame) {
 		this.dbdao = db;
+		check = frame;
+		
 		// AbsoluteLayout
 		mainPanel.setLayout(null);
 		
@@ -32,10 +37,8 @@ public class LoginFailFrame extends JFrame implements ActionListener {
 		mainPanel.add(failLabel);
 		
 		closeBtn.setBounds(135, 90, 60, 30);
-		mainPanel.add(closeBtn);
-		
-		check = frame;
 		closeBtn.addActionListener(this);
+		mainPanel.add(closeBtn);
 		
 		this.add(mainPanel);
 		
@@ -51,7 +54,7 @@ public class LoginFailFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == closeBtn) {
-			System.out.println("팝업창 닫기");
+			System.out.println("팝업창 닫기");		// 닫기 버튼 클릭
 			if (check) {
 				System.out.println("로그인 실패 팝업 → 관계자 로그인 화면");
 				if (doctorLogin == null) {

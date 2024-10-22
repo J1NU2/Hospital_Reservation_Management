@@ -3,14 +3,10 @@ package gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-import javax.print.CancelablePrintJob;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -50,7 +46,7 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 	private JScrollPane reservListScrollPane = new JScrollPane(reservList);
 	
 	private JButton logoutBtn = new JButton("로그아웃");
-	private JButton symptomsMemoChangeBtn = new JButton("증상메모 변경");
+	private JButton medicalMemoBtn = new JButton("증상메모 변경");
 	private JButton cancelBtn = new JButton("예약취소");
 	
 	private DoctorLoginFrame doctorLogin = null;
@@ -67,9 +63,6 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 		this.dbdao = db;
 		this.doctordto = doctordto;
 		this.rList = dbdao.reservationDoctorAll(doctordto.getNum());
-		for (int i=0; i<rList.size(); i++) {
-			System.out.println(rList.get(i).toString());
-		}
 		
 		// AbsoluteLayout
 		mainPanel.setLayout(null);
@@ -93,6 +86,7 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 		mainPanel.add(doctorNumText);
 		
 		logoutBtn.setBounds(530, 18, 85, 30);
+		logoutBtn.addActionListener(this);
 		mainPanel.add(logoutBtn);
 		
 		// 환자 예약 내역
@@ -102,7 +96,6 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 		reservListLabel.setBounds(15, -5, 80, 50);
 		reservListPanel.add(reservListLabel);
 		reservListPanel.add(selectRowCheckLabel);
-		
 		try {
 			for (int i=0; i<rList.size(); i++) {
 				PatientDTO reservPatient = dbdao.patientOne(rList.get(i).getIdentityNum());
@@ -118,7 +111,6 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 				model.addRow(rowData);
 			}
 		} catch (Exception e) {}
-		
 		reservList.setRowHeight(30);
 		reservList.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -132,31 +124,29 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 		reservListScrollPane.setBounds(25, 40, 500, 520);
 		reservListPanel.add(reservListScrollPane);
 		
-		symptomsMemoChangeBtn.setBounds(320, 585, 110, 30);
-		reservListPanel.add(symptomsMemoChangeBtn);
+		medicalMemoBtn.setBounds(320, 585, 110, 30);
+		medicalMemoBtn.addActionListener(this);
+		reservListPanel.add(medicalMemoBtn);
 		cancelBtn.setBounds(440, 585, 85, 30);
+		cancelBtn.addActionListener(this);
 		reservListPanel.add(cancelBtn);
 		
 		mainPanel.add(reservListPanel);
 		
-		logoutBtn.addActionListener(this);
-		symptomsMemoChangeBtn.addActionListener(this);
-		cancelBtn.addActionListener(this);
-		
 		this.add(mainPanel);
 		
-		this.setTitle("병원 예약 관리 시스템 : 관계자 등록");
+		this.setTitle("병원 예약 관리 시스템 : 예약 내역 확인하기");
 		this.setSize(680, 800);				// 화면 크기 680x800
 		this.setLocationRelativeTo(null);	// 화면 중앙 배치
 		this.setVisible(true);
 		this.setResizable(false);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
-
+	
 	// 이벤트 발생 메서드
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == logoutBtn) {
+		if (e.getSource() == logoutBtn) {						// 로그아웃 버튼 클릭
 			System.out.println("로그아웃");
 			System.out.println("예약 목록 화면 → 관계자 로그인 화면");
 			if (doctorLogin == null) {
@@ -164,7 +154,7 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 			}
 			this.setVisible(false);
 			doctorLogin.setVisible(true);
-		} else if (e.getSource() == symptomsMemoChangeBtn) {
+		} else if (e.getSource() == medicalMemoBtn) {	// 증상메모 변경 버튼 클릭
 			if (selectRowCheck()) {
 				System.out.println("예약 목록 화면 → 증상메모 변경 팝업");
 				reservdto = rList.get(rowSel);
@@ -174,9 +164,9 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 				this.setVisible(false);
 				textInsert.setVisible(true);
 			} else {
-				System.out.println(rowSel + "번!");
+				System.out.println(rowSel + "번 행 선택");
 			}
-		} else if (e.getSource() == cancelBtn) {
+		} else if (e.getSource() == cancelBtn) {				// 예약취소 버튼 클릭
 			if (selectRowCheck()) {
 				System.out.println("예약 목록 화면 → 취소사유 등록 팝업");
 				reservdto = rList.get(rowSel);
@@ -186,11 +176,13 @@ public class DoctorMedicalListFrame extends JFrame implements ActionListener {
 				this.setVisible(false);
 				textInsert.setVisible(true);
 			} else {
-				System.out.println(rowSel + "번!");
+				System.out.println(rowSel + "번 행 선택");
 			}
 		}
 	}
-	public boolean selectRowCheck() {
+	
+	// 테이블 행 선택 여부, 선택되면 true, 선택되지 않으면 false
+	private boolean selectRowCheck() {
 		if (rowSel >= 0) {
 			return true;
 		} else {

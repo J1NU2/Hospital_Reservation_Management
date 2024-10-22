@@ -13,14 +13,17 @@ import dao.DBdao;
 
 public class MainFrame extends JFrame implements ActionListener {
 	private JPanel mainPanel = new JPanel();
+	
 	private JLabel titleLabel = new JLabel("병원 예약 관리 시스템");
+	
 	private JButton patientLoginBtn = new JButton("일반회원 로그인");
 	private JButton doctorLoginBtn = new JButton("관계자 로그인");
 	
 	private PatientLoginFrame patientLogin = null;
 	private DoctorCheckFrame doctorCheck = null;
 	
-	DBdao dbdao = null;
+	private DBdao dbdao = null;
+	
 	public MainFrame(DBdao dao) {
 		this.dbdao = dao;
 		
@@ -32,13 +35,11 @@ public class MainFrame extends JFrame implements ActionListener {
 		mainPanel.add(titleLabel);
 		
 		patientLoginBtn.setBounds(110, 120, 125, 40);
-		mainPanel.add(patientLoginBtn);
-		
-		doctorLoginBtn.setBounds(255, 120, 125, 40);
-		mainPanel.add(doctorLoginBtn);
-		
 		patientLoginBtn.addActionListener(this);
+		mainPanel.add(patientLoginBtn);
+		doctorLoginBtn.setBounds(255, 120, 125, 40);
 		doctorLoginBtn.addActionListener(this);
+		mainPanel.add(doctorLoginBtn);
 		
 		this.add(mainPanel);
 		
