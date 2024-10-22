@@ -109,15 +109,11 @@ public class TextInsertFrame extends JFrame implements ActionListener {
 				System.out.println("증상메모 변경");
 				System.out.println("증상메모 변경 팝업 → 예약 목록 화면");
 				if (!(textArea.getText().equals("") || textArea.getText().equals("여기에 입력해주세요."))) {
-					if (doctorMedicalList == null) {
-						doctorMedicalList = new DoctorMedicalListFrame(dbdao, doctordto);
-					}
-					
 					dbdao.reservationMod(reservdto, textArea.getText());
 					
 					checkLabel.setText("");
 					this.setVisible(false);
-					doctorMedicalList.setVisible(true);
+					new DoctorMedicalListFrame(dbdao, doctordto);
 				} else {
 					checkLabel.setText("증상을 입력해주세요.");
 					checkLabel.setForeground(Color.RED);
@@ -137,15 +133,11 @@ public class TextInsertFrame extends JFrame implements ActionListener {
 				System.out.println("취소사유 등록");
 				System.out.println("취소사유 등록 팝업 → 예약 목록 화면");
 				if (!(textArea.getText().equals("") || textArea.getText().equals("여기에 입력해주세요."))) {
-					if (doctorMedicalList == null) {
-						doctorMedicalList = new DoctorMedicalListFrame(dbdao, doctordto);
-					}
-					
 					dbdao.reservationCancel(reservdto, textArea.getText());
 					
 					checkLabel.setText("");
 					this.setVisible(false);
-					doctorMedicalList.setVisible(true);
+					new DoctorMedicalListFrame(dbdao, doctordto);
 				} else {
 					checkLabel.setText("사유를 입력해주세요.");
 					checkLabel.setForeground(Color.RED);
