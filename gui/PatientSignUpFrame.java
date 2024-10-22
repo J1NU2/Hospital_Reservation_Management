@@ -57,9 +57,9 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 	
 	private DBdao dbdao = null;
 	
-	private boolean idCheck = false;
+	private boolean idCheck = true;
 	private boolean pwdCheck = false;
-	private boolean idenCheck = false;
+	private boolean idenCheck = true;
 	private String identity = null;
 	
 	public PatientSignUpFrame(DBdao db) {
@@ -311,7 +311,7 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == signupBtn) {			// 가입 버튼 클릭
 			if (signupBlankCheck()) {
-				if (!idCheck && pwdCheck && !idenCheck) {
+				if (!(idCheck) && pwdCheck && !(idenCheck)) {
 					// 회원가입 성공
 					System.out.println("회원가입 성공");
 					System.out.println("회원가입 화면 → 회원가입 성공 팝업");
@@ -336,22 +336,49 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 					
 					this.setVisible(false);
 					signupSuccess.setVisible(true);
-				} else {
+				} else if (idCheck) {
 					// 회원가입 실패
 					System.out.println("회원가입 실패");
-					System.out.println("회원가입 화면 → 회원가입 실패 팝업");
+					System.out.println("회원가입 화면 → 회원가입 실패 팝업(아이디 중복 검사 필요)");
 					if (signupFail == null) {
-						signupFail = new SignUpFailFrame(dbdao, false);
+						signupFail = new SignUpFailFrame(dbdao, false, 1);
+					}
+					this.setVisible(false);
+					signupFail.setVisible(true);
+				} else if (!(pwdCheck)) {
+					// 회원가입 실패
+					System.out.println("회원가입 실패");
+					System.out.println("회원가입 화면 → 회원가입 실패 팝업(일치하지 않는 비밀번호)");
+					if (signupFail == null) {
+						signupFail = new SignUpFailFrame(dbdao, false, 2);
+					}
+					this.setVisible(false);
+					signupFail.setVisible(true);
+				} else if (idenCheck) {
+					// 회원가입 실패
+					System.out.println("회원가입 실패");
+					System.out.println("회원가입 화면 → 회원가입 실패 팝업(주민번호 중복 검사 필요)");
+					if (signupFail == null) {
+						signupFail = new SignUpFailFrame(dbdao, false, 3);
 					}
 					this.setVisible(false);
 					signupFail.setVisible(true);
 				}
+			} else if (ageText.getText().isEmpty() || genderText.getText().isEmpty()) {
+				// 회원가입 실패
+				System.out.println("회원가입 실패");
+				System.out.println("회원가입 화면 → 회원가입 실패 팝업(주민번호 중복 검사 필요)");
+				if (signupFail == null) {
+					signupFail = new SignUpFailFrame(dbdao, false, 3);
+				}
+				this.setVisible(false);
+				signupFail.setVisible(true);
 			} else {
 				// 회원가입 실패
 				System.out.println("회원가입 실패");
-				System.out.println("회원가입 화면 → 회원가입 실패 팝업");
+				System.out.println("회원가입 화면 → 회원가입 실패 팝업(빈 칸 존재)");
 				if (signupFail == null) {
-					signupFail = new SignUpFailFrame(dbdao, false);
+					signupFail = new SignUpFailFrame(dbdao, false, 0);
 				}
 				this.setVisible(false);
 				signupFail.setVisible(true);
@@ -377,6 +404,7 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 				idCheckLabel.setText("중복된 아이디가 있습니다.");
 				idCheckLabel.setForeground(Color.RED);
 			} else {
+				idCheck = false;
 				idCheckLabel.setText("OK");
 				idCheckLabel.setForeground(Color.GREEN);
 			}
@@ -404,6 +432,7 @@ public class PatientSignUpFrame extends JFrame implements ActionListener {
 				ageText.setText("");
 				genderText.setText("");
 			} else {
+				idenCheck = false;
 				idenCheckLabel.setText("OK");
 				idenCheckLabel.setForeground(Color.GREEN);
 				ageText.setText(Integer.toString(identityAge(idenInput1.getText())));

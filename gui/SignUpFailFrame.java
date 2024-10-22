@@ -14,7 +14,7 @@ import dao.DBdao;
 public class SignUpFailFrame extends JFrame implements ActionListener {
 	private JPanel mainPanel = new JPanel();
 	
-	private JLabel failLabel1 = new JLabel("빈 칸 또는 잘못된 정보가 있습니다.");
+	private JLabel failLabel1 = new JLabel();
 	private JLabel failLabel2 = new JLabel("확인 후 다시 입력 부탁드립니다.");
 	
 	private JButton closeBtn = new JButton("닫기");
@@ -26,21 +26,50 @@ public class SignUpFailFrame extends JFrame implements ActionListener {
 	
 	private boolean check = false;
 	
-	public SignUpFailFrame(DBdao db, boolean frame) {
+	public SignUpFailFrame(DBdao db, boolean frame, int text) {
 		this.dbdao = db;
 		check = frame;
 		
 		// AbsoluteLayout
 		mainPanel.setLayout(null);
 		
-		failLabel1.setFont(new Font(getName(), Font.BOLD, 14));
-		failLabel1.setBounds(55, 25, 220, 50);
+		if (frame && text == 1) {
+			// 관계자(의사) : 의사번호 중복 검사 필요
+			failLabel1.setFont(new Font(getName(), Font.BOLD, 14));
+			failLabel1.setBounds(59, 25, 220, 50);
+			failLabel1.setText("의사번호 중복 확인이 필요합니다.");
+		} else if (frame && text == 2) {
+			// 관계자(의사) : 일치하지 않는 비밀번호
+			failLabel1.setFont(new Font(getName(), Font.BOLD, 14));
+			failLabel1.setBounds(67, 25, 220, 50);
+			failLabel1.setText("비밀번호가 일치하지 않습니다.");
+		} else if (!(frame) && text == 1) {
+			// 일반회원(환자) : 아이디 중복 검사 필요
+			failLabel1.setFont(new Font(getName(), Font.BOLD, 14));
+			failLabel1.setBounds(65, 25, 220, 50);
+			failLabel1.setText("아이디 중복 확인이 필요합니다.");
+		} else if (!(frame) && text == 2) {
+			// 일반회원(환자) : 일치하지 않는 비밀번호
+			failLabel1.setFont(new Font(getName(), Font.BOLD, 14));
+			failLabel1.setBounds(67, 25, 220, 50);
+			failLabel1.setText("비밀번호가 일치하지 않습니다.");
+		} else if (!(frame) && text == 3) {
+			// 일반회원(환자) : 주민번호 중복 검사 필요
+			failLabel1.setFont(new Font(getName(), Font.BOLD, 14));
+			failLabel1.setBounds(59, 25, 220, 50);
+			failLabel1.setText("주민번호 중복 확인이 필요합니다.");
+		} else {
+			// 빈 칸 또는 잘못된 정보 입력
+			failLabel1.setFont(new Font(getName(), Font.BOLD, 14));
+			failLabel1.setBounds(57, 25, 220, 50);
+			failLabel1.setText("빈 칸 또는 잘못된 정보가 있습니다.");
+		}
 		mainPanel.add(failLabel1);
 		failLabel2.setFont(new Font(getName(), Font.BOLD, 14));
-		failLabel2.setBounds(62, 45, 205, 50);
+		failLabel2.setBounds(64, 45, 205, 50);
 		mainPanel.add(failLabel2);
 		
-		closeBtn.setBounds(135, 100, 60, 30);
+		closeBtn.setBounds(137, 100, 60, 30);
 		closeBtn.addActionListener(this);
 		mainPanel.add(closeBtn);
 		

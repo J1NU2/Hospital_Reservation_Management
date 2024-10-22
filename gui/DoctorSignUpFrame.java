@@ -51,7 +51,7 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 	
 	private DBdao dbdao = null;
 	
-	private boolean numCheck = false;
+	private boolean numCheck = true;
 	private boolean pwdCheck = false;
 	private String major = null;
 	
@@ -220,7 +220,7 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 		if (e.getSource() == signupBtn) {			// 등록 버튼 클릭
 			// 관계자 등록
 			if (signupBlankCheck()) {
-				if (!numCheck && pwdCheck) {
+				if (!(numCheck) && pwdCheck) {
 					// 관계자 등록 성공
 					System.out.println("관계자 등록 성공");
 					System.out.println("관계자 등록 화면 → 관계자 등록 성공 팝업");
@@ -238,12 +238,21 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 					
 					this.setVisible(false);
 					signupSuccess.setVisible(true);
-				} else {
+				} else if (numCheck) {
 					// 관계자 등록 실패
 					System.out.println("관계자 등록 실패");
-					System.out.println("관계자 등록 화면 → 관계자 등록 실패 팝업");
+					System.out.println("관계자 등록 화면 → 관계자 등록 실패 팝업(의사번호 중복 검사 필요)");
 					if (signupFail == null) {
-						signupFail = new SignUpFailFrame(dbdao, true);
+						signupFail = new SignUpFailFrame(dbdao, true, 1);
+					}
+					this.setVisible(false);
+					signupFail.setVisible(true);
+				} else if (!(pwdCheck)) {
+					// 관계자 등록 실패
+					System.out.println("관계자 등록 실패");
+					System.out.println("관계자 등록 화면 → 관계자 등록 실패 팝업(일치하지 않는 비밀번호)");
+					if (signupFail == null) {
+						signupFail = new SignUpFailFrame(dbdao, true, 2);
 					}
 					this.setVisible(false);
 					signupFail.setVisible(true);
@@ -251,9 +260,9 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 			} else {
 				// 관계자 등록 실패
 				System.out.println("관계자 등록 실패");
-				System.out.println("관계자 등록 화면 → 관계자 등록 실패 팝업");
+				System.out.println("관계자 등록 화면 → 관계자 등록 실패 팝업(빈 칸 존재)");
 				if (signupFail == null) {
-					signupFail = new SignUpFailFrame(dbdao, true);
+					signupFail = new SignUpFailFrame(dbdao, true, 0);
 				}
 				this.setVisible(false);
 				signupFail.setVisible(true);
@@ -279,6 +288,7 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 				numCheckLabel.setText("중복된 번호가 존재합니다.");
 				numCheckLabel.setForeground(Color.RED);
 			} else {
+				numCheck = false;
 				numCheckLabel.setText("OK");
 				numCheckLabel.setForeground(Color.GREEN);
 			}
