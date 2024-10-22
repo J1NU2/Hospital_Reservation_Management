@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import dao.DBdao;
@@ -32,8 +33,8 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 	private JLabel majorLabel = new JLabel("전공");
 	
 	private JTextField numInput = new JTextField();
-	private JTextField pwdInput1 = new JTextField();
-	private JTextField pwdInput2 = new JTextField();
+	private JPasswordField pwdInput1 = new JPasswordField();
+	private JPasswordField pwdInput2 = new JPasswordField();
 	private JTextField nameInput = new JTextField();
 	
 	private Choice majorChoice = new Choice();
@@ -97,9 +98,10 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 		pwdInput1.setBounds(200, 118, 170, 25);
 		pwdInput1.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
-				JTextField leng = (JTextField) e.getSource();
+				JPasswordField leng = (JPasswordField) e.getSource();
 				char text = e.getKeyChar();
-				if (leng.getText().length() >= 20) e.consume();
+				String password = new String(leng.getPassword());
+				if (password.length() >= 20) e.consume();
 				// 아스키코드값
 				// 48 : 0 ~ 57 : 9
 				// 65 : A ~ 90 : Z
@@ -110,8 +112,8 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 				}
 			}
 			public void keyReleased(KeyEvent e) {
-				String pwd1 = pwdInput1.getText();
-				String pwd2 = pwdInput2.getText();
+				String pwd1 = new String(pwdInput1.getPassword());
+				String pwd2 = new String(pwdInput2.getPassword());
 				if (pwd1.equals(pwd2) && !(pwd1.isEmpty()) && !(pwd2.isEmpty())) {
 					System.out.println("패스워드 일치");
 					pwdCheckLabel.setText("비밀번호가 일치합니다.");
@@ -133,9 +135,10 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 		pwdInput2.setBounds(200, 163, 170, 25);
 		pwdInput2.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
-				JTextField leng = (JTextField) e.getSource();
+				JPasswordField leng = (JPasswordField) e.getSource();
 				char text = e.getKeyChar();
-				if (leng.getText().length() >= 20) e.consume();
+				String password = new String(leng.getPassword());
+				if (password.length() >= 20) e.consume();
 				// 아스키코드값
 				// 48 : 0 ~ 57 : 9
 				// 65 : A ~ 90 : Z
@@ -146,8 +149,8 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 				}
 			}
 			public void keyReleased(KeyEvent e) {
-				String pwd1 = pwdInput1.getText();
-				String pwd2 = pwdInput2.getText();
+				String pwd1 = new String(pwdInput1.getPassword());
+				String pwd2 = new String(pwdInput2.getPassword());
 				if (pwd1.equals(pwd2) && !(pwd1.isEmpty()) && !(pwd2.isEmpty())) {
 					System.out.println("패스워드 일치");
 					pwdCheckLabel.setText("비밀번호가 일치합니다.");
@@ -227,7 +230,8 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 					
 					DoctorDTO doctordto = new DoctorDTO();
 					doctordto.setNum(numInput.getText());
-					doctordto.setPwd(pwdInput2.getText());
+					String password = new String(pwdInput2.getPassword());
+					doctordto.setPwd(password);
 					doctordto.setName(nameInput.getText());
 					doctordto.setMajor(major);
 					dbdao.doctorSignUp(doctordto);
@@ -295,8 +299,10 @@ public class DoctorSignUpFrame extends JFrame implements ActionListener, ItemLis
 	
 	// 의사 등록 시 누락된 정보가 없으면 true, 있으면 false
 	private boolean signupBlankCheck() {
-		if (numInput.getText().isEmpty() || pwdInput1.getText().isEmpty() || 
-				pwdInput2.getText().isEmpty() || nameInput.getText().isEmpty() || major == null) {
+		String pwd1 = new String(pwdInput1.getPassword());
+		String pwd2 = new String(pwdInput2.getPassword());
+		if (numInput.getText().isEmpty() || pwd1.length() == 0 || pwd2.length() == 0 || 
+				nameInput.getText().isEmpty() || major == null) {
 			return false;
 		}
 		return true;
