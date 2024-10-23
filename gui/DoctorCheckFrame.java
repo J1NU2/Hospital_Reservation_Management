@@ -7,7 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JPasswordField;
 
 import dao.DBdao;
 
@@ -16,7 +16,7 @@ public class DoctorCheckFrame extends JFrame implements ActionListener {
 	
 	private JLabel checkLabel = new JLabel("인증번호");
 	
-	private JTextField checkInput = new JTextField();
+	private JPasswordField checkInput = new JPasswordField();
 	
 	private JButton checkBtn = new JButton("확인");
 	private JButton closeBtn = new JButton("닫기");
@@ -62,8 +62,9 @@ public class DoctorCheckFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == checkBtn) {			// 확인 버튼 클릭
+			String check = new String(checkInput.getPassword());
 			System.out.println("인증번호 확인 ↓");
-			if (checkInput.getText().equals(checkNum)) {
+			if (check.equals(checkNum)) {
 				System.out.println("인증번호 맞음");
 				System.out.println("인증 성공 → 관계자 로그인 화면");
 				if (doctorLogin == null) {
