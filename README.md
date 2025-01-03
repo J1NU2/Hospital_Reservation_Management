@@ -1,7 +1,9 @@
 <h1 align="center">
   <img src="https://github.com/user-attachments/assets/9323ce6b-3820-4c99-a06b-7447866f537a" alt="HRMS" width="400px">
   <br>
-  Hospital Reservation Management
+  Hospital Reservation Management System
+  <br>
+  [ 병원 예약 관리 시스템 ]
   <br>
 </h1>
 
