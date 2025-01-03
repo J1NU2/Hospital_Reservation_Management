@@ -61,19 +61,58 @@
 ## 📕 주요 기능 구현
 <details>
   <summary><b>① 회원가입 입력 제한</b></summary>
-  <br>
+  <h3>회원가입 화면</h3>
   <ul>
-    
+    <li>회원가입 정보 입력 시 제한 사항</li>
+    <ul>
+      <li>최대 길이</li>
+      <li>특정 문자 입력 제한 (ex. 아이디:한글,특수문자, 주민번호:한글,영어,특수문자)</li>
+      <img src="https://github.com/user-attachments/assets/0a517ccc-9386-4581-b079-57505f1d749b">
+    </ul>
   </ul>
+  <br>
 </details>
 <details>
   <summary><b>② 회원가입 나이/성별 자동 입력</b></summary>
+  <h3>회원가입 화면</h3>
+  <ul>
+    <li>주민번호 입력 시 자동 입력</li>
+    <ul>
+      <li>나이 : 주민번호 앞자리의 생년월일을 기준으로 만나이로 자동 계산</li>
+      <li>성별 : 주민번호 뒷자리의 첫번째 자리를 기준으로 남성(M), 여성(F) 판별</li>
+      <img src="https://github.com/user-attachments/assets/9f71dcaf-003e-4327-99cf-241a1ee2ea81">
+    </ul>
+  </ul>
+  <br>
 </details>
 <details>
   <summary><b>③ 현재 날짜 선택 시 예약일 배치</b></summary>
+  <h3>고객(환자) : 예약하기 화면</h3>
+  <ul>
+    <li>현재 날짜 선택 시 년/월 기준 일 표시</li>
+    <img src="https://github.com/user-attachments/assets/b63d862a-561b-414e-9ebd-529199bec0de">
+  </ul>
+  <br>
 </details>
 <details>
   <summary><b>④ 예약 내역 리스트 확인</b></summary>
+  <h3>환자 및 의사 : 예약 화면</h3>
+  <ul>
+    <li>고객(환자) : 현재 예약 내역 및 전체 예약 내역 확인</li>
+    <ul>
+      <li>현재 예약 내역</li>
+      <img src="https://github.com/user-attachments/assets/0f2d615e-d8fe-4877-a69a-d7a447cdd5d9">
+      <br>
+      <li>전체 예약 내역</li>
+      <img src="https://github.com/user-attachments/assets/6a5c4109-26e5-4366-aecd-d0ffe6d94f50">
+    </ul>
+    <br>
+    <li>관계자(의사) : 자신에게 예약된 전체 예약 내역 확인</li>
+    <ul>
+      <li>환자 예약 내역</li>
+      <img src="https://github.com/user-attachments/assets/9ea9d6d4-4c1a-4d40-9164-10a6795f6844">
+    </ul>
+  </ul>
 </details>
 
 <br>
