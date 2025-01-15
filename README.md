@@ -1,4 +1,4 @@
-<h1 align="center">
+<h2 align="center">
   <img src="https://github.com/user-attachments/assets/9323ce6b-3820-4c99-a06b-7447866f537a" alt="HRMS" width="400px">
   <br>
   Hospital Reservation Management System
@@ -11,7 +11,11 @@
 
 ## 📌 목차
 1. [🖥️ 프로젝트 개요](#-프로젝트-개요)
-2. [📕 주요 기능 구현](#-주요-기능-구현)
+2. [📕 주요 기능 구현](#-주요-기능-구현)<br>
+  2-1. [📆 개발기간](#-개발기간)<br>
+  2-2. [🔖 프로젝트 주제](#-프로젝트-주제)<br>
+  2-3. [⚙️ 개발환경 및 도구](#-개발환경-및-도구)<br>
+  2-4. [🧑‍🤝‍🧑 멤버 구성](#-멤버-구성)<br>
 3. [🖌️ 화면 설계](#-화면-설계)
 4. [📄 정의서 및 명세서](#-정의서-및-명세서)
 5. [🏗️ ERD](#-ERD)
@@ -37,18 +41,18 @@
 ### ⚙️ 개발환경 및 도구
 ![개발환경](https://github.com/user-attachments/assets/48e7da36-83a8-43b9-a80b-2c5605d20c44)
   - IDE :
-    ![Eclipse](https://img.shields.io/badge/Eclipse-2C2255.svg?&style=for-the-badge&logo=Eclipse&logoColor=white)
+    ![Eclipse](https://img.shields.io/badge/Eclipse-2C2255.svg?&style=for-the-badge&logo=eclipse&logoColor=white)
   - Language :
-    ![Java 1.8 (JDK 1.8)](https://img.shields.io/badge/Java%208v%20(JDK%201.8)-007396.svg?&style=for-the-badge&logo=Java%208v%20(JDK%201.8)&logoColor=white)
+    ![Java 1.8 (JDK 1.8)](https://img.shields.io/badge/Java%208v%20(JDK%201.8)-007396.svg?&style=for-the-badge&logo=java&logoColor=white)
   - DBMS :
-    ![Oracle 11g r2](https://img.shields.io/badge/Oracle%2011g%20r2-9F1D20.svg?&style=for-the-badge&logo=Oracle%2011g%20r2&logoColor=white)
+    ![Oracle 11g r2](https://img.shields.io/badge/Oracle%2011g%20r2-9F1D20.svg?&style=for-the-badge&logo=oracle&logoColor=white)
   - DB Tool :
-    ![SQL Developer](https://img.shields.io/badge/SQL%20Developer-242F4B.svg?&style=for-the-badge&logo=SQL%20Developer&logoColor=white)
-    ![SQL Plus](https://img.shields.io/badge/SQL%20Plus-2AA5DC.svg?&style=for-the-badge&logo=SQL%20Plus&logoColor=white)
-    ![ERD Cloud](https://img.shields.io/badge/ERD%20Cloud-6B46C1.svg?&style=for-the-badge&logo=ERD%20Cloud&logoColor=white)
+    ![SQL Developer](https://img.shields.io/badge/SQL%20Developer-242F4B.svg?&style=for-the-badge&logo=sqldeveloper&logoColor=white)
+    ![SQL Plus](https://img.shields.io/badge/SQL%20Plus-2AA5DC.svg?&style=for-the-badge&logo=sqlplus&logoColor=white)
+    ![ERD Cloud](https://img.shields.io/badge/ERD%20Cloud-6B46C1.svg?&style=for-the-badge&logo=erdcloud&logoColor=white)
   - Library :
-    ![Java AWT/Swing](https://img.shields.io/badge/Java%20AWT/Swing-007396.svg?&style=for-the-badge&logo=Java%20AWT/Swing&logoColor=white)
-    ![ojdbc6.jar](https://img.shields.io/badge/ojdbc6.jar-FE5F50.svg?&style=for-the-badge&logo=ojdbc6.jar&logoColor=white)
+    ![Java AWT/Swing](https://img.shields.io/badge/Java%20AWT/Swing-007396.svg?&style=for-the-badge&logo=javaawtswing&logoColor=white)
+    ![ojdbc6.jar](https://img.shields.io/badge/ojdbc6.jar-FE5F50.svg?&style=for-the-badge&logo=ojdbc&logoColor=white)
   - VCS :
     ![GitHub](https://img.shields.io/badge/github-181717.svg?&style=for-the-badge&logo=github&logoColor=white)
     ![Git Bash](https://img.shields.io/badge/Git%20Bash-F05032.svg?&style=for-the-badge&logo=git&logoColor=white)
@@ -56,7 +60,7 @@
 ### 🧑‍🤝‍🧑 멤버 구성
 |팀원명|프로필|담당업무|
 |---|---|---|
-|[박진우](https://github.com/J1NU2)|<p align="center"><img src="https://github.com/user-attachments/assets/b4bdb924-a878-40b9-a448-aea6ee2259c8" width="100"></p>|프로젝트 설계, 데이터베이스 설계, UI 설계, 클래스 설계<br>로그인 및 회원가입 기능, 진료 예약 기능 구현|
+|[박진우](https://github.com/J1NU2)|<p align="center"><img src="https://avatars.githubusercontent.com/u/104364437?v=4" width="100px"></p>|프로젝트 설계, 데이터베이스 설계, UI 설계, 클래스 설계<br>로그인 및 회원가입 기능, 진료 예약 기능 구현|
 
 <br>
 
